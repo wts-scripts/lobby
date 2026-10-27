@@ -51,6 +51,22 @@ Aucune base de données nécessaire : les réponses sont gardées en cache par V
 - Anti-spam : 6 publications maximum par heure et par connexion.
 - Sans la base Upstash, l'onglet affiche comment l'activer.
 
+## Comptes : profils publics
+- **Mon profil** : pseudo unique, nom affiché, présentation, jeux favoris, et tous les comptes : Steam, Epic, Xbox, PlayStation, Nintendo, Battle.net, EA, Riot, Ubisoft, Rockstar, Twitch, YouTube, Kick, TikTok, X, Instagram, Discord (pseudo et serveur).
+- Les liens sont vérifiés et remis au propre (un pseudo Twitch devient `https://www.twitch.tv/pseudo`, un SteamID devient le lien du profil…). Un lien vers un autre site est refusé.
+- Case **Profil public** : cochée, le profil apparaît dans **Joueurs** (et dans **Live** s'il y a une chaîne). Décochée, il reste seulement sur l'appareil.
+- Le pseudo est protégé : seul l'appareil qui l'a créé (jeton gardé sur l'appareil) peut le modifier ou le retirer.
+- **Joueurs** : annuaire avec recherche. La fiche d'un joueur ouvre ses liens (Twitch, Steam…) et copie ses identifiants (PSN, Battle.net, Riot…). Lien direct vers une fiche : `/#j-pseudo`.
+- Modération comme la Meta : masqué après 5 signalements, l'admin (`LOBBY_KEY`) peut supprimer.
+- **Amis en ligne** : les liaisons Steam / Xbox / FiveM de l'onglet Amis (restent sur l'appareil).
+
+## Live
+- Les joueurs qui ont mis leur Twitch dans leur profil public. Ceux en direct passent devant, le plus regardé est mis **à la une** (miniature du stream, titre, jeu, spectateurs, depuis quand).
+- Un clic ouvre le stream **dans l'appli**, avec le chat Twitch en option.
+- Les chaînes hors ligne restent listées, et les profils YouTube / Kick ont leurs liens.
+- Le compteur rouge dans le menu indique combien de joueurs sont en direct. Actualisation chaque minute.
+- Utilise les mêmes clés `TWITCH_CLIENT_ID` / `TWITCH_CLIENT_SECRET` qu'IGDB, et la base Upstash des profils.
+
 ## Config PC
 - 4 configs de départ (Entrée, Milieu, Haut de gamme, Ultime) ou choix pièce par pièce : processeur, carte mère, mémoire, carte graphique, stockage, refroidissement, alimentation, boîtier.
 - Vérifications : socket processeur / carte mère, DDR4 / DDR5, ventirad fourni ou non, emplacements M.2, longueur de la carte graphique / boîtier, puissance de l'alimentation (calcul de la consommation + marge), câble 12V-2x6, équilibre processeur / carte graphique, mémoire et VRAM.

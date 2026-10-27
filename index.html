@@ -324,6 +324,58 @@ h2{font:700 calc(24px*var(--ds))/1.2 var(--display);letter-spacing:.03em;text-tr
 .saved{list-style:none;margin:0;padding:0;display:grid;gap:4px}
 .saved li{display:flex;align-items:center;gap:8px}
 .saved li .meta{margin-left:auto}
+/* Comptes : profils */
+.subh{font:700 calc(16px*var(--ds)) var(--display);letter-spacing:.06em;text-transform:uppercase;margin:24px 0 12px}
+.pubbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-bottom:16px}
+.pform{display:grid;gap:18px}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.pgrid .span2{grid-column:span 2}
+@media (max-width:560px){.pgrid .span2{grid-column:auto}}
+.pgroup{border:1px solid var(--line);border-radius:12px;padding:12px 14px 14px;margin:0;min-width:0}
+.pgroup legend{font:600 12px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:0 6px}
+.check{display:flex;gap:10px;align-items:center;font-weight:600}
+.check input{width:20px;height:20px;accent-color:var(--accent)}
+.players{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+.pcard{display:flex;gap:12px;align-items:center;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;color:var(--fg);font:inherit;cursor:pointer;min-width:0}
+button.pcard:hover{border-color:var(--violet)}
+.pcard:focus-visible{outline:2px solid var(--accent)}
+.pcard>img{width:48px;height:48px;border-radius:12px;flex:none;object-fit:cover}
+.pinfo{display:grid;gap:3px;min-width:0;flex:1}
+.pinfo b{font:600 calc(16px*var(--ds)) var(--display)}
+.pbadges{display:flex;gap:4px;flex-wrap:wrap}
+a.plat{text-decoration:none}
+.phead{display:flex;gap:14px;align-items:center}
+.phead img{border-radius:14px;object-fit:cover}
+.plinks{list-style:none;margin:0;padding:0;display:grid;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.plinks li{display:grid;grid-template-columns:minmax(110px,32%) minmax(0,1fr) auto;gap:10px;align-items:center;background:var(--surface);padding:8px 10px}
+.plinks .pn{font:600 12px var(--mono);text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.plinks .pv{font-weight:600;overflow-wrap:anywhere;min-width:0}
+.plinks .pa{display:flex;gap:6px}
+.plinks .btn{padding:6px 10px;font-size:13px}
+@media (max-width:480px){.plinks li{grid-template-columns:1fr auto}.plinks .pn{grid-column:1/-1}}
+
+/* Live */
+nav .count.live{color:#fff;background:#e91916}
+.livetag{position:absolute;left:10px;top:10px;background:#e91916;color:#fff;font:700 11px var(--mono);letter-spacing:.08em;padding:3px 7px;border-radius:5px}
+.lview{position:absolute;left:10px;bottom:10px;background:rgb(10 8 20/.72);color:#fff;font:600 12px var(--body);padding:3px 8px;border-radius:5px}
+.lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.lcard{display:grid;gap:10px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;color:var(--fg);font:inherit;cursor:pointer;padding:0 0 12px;min-width:0}
+.lcard:hover{border-color:var(--violet)}
+.lcard:focus-visible{outline:2px solid var(--accent)}
+.lthumb{position:relative;display:block;aspect-ratio:16/9;background:var(--raise)}
+.lthumb img{width:100%;height:100%;object-fit:cover;display:block}
+.linfo{display:flex;gap:10px;padding:0 12px;min-width:0}
+.linfo>span{display:grid;gap:2px;min-width:0}
+.lav{width:40px;height:40px;border-radius:50%;flex:none;object-fit:cover}
+.ltitle{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lcard.big{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);align-items:center;padding:0;margin-bottom:8px}
+.lcard.big .linfo{padding:16px}
+.lcard.big .linfo b{font:700 calc(22px*var(--ds)) var(--display)}
+.lcard.big .ltitle{white-space:normal;font-size:16px}
+@media (max-width:760px){.lcard.big{grid-template-columns:1fr;padding-bottom:12px}.lcard.big .linfo{padding:0 12px}}
+.livebar{display:grid;gap:4px;text-align:left;background:var(--raise);border:1px solid var(--line);border-radius:10px;padding:10px 12px;color:var(--fg);font:600 15px var(--body);cursor:pointer}
+.livebar .livetag{position:static;justify-self:start}
+.lchat{width:100%;height:520px;border:0;border-radius:10px;background:var(--raise)}
 footer{color:var(--muted);font-size:13px;padding-block:24px;border-top:1px solid var(--line)}
 @media (prefers-reduced-motion:no-preference){.game,.btn,.chip,.ncard,.item{transition:border-color .15s,background .15s}}
 </style>
@@ -343,6 +395,7 @@ footer{color:var(--muted);font-size:13px;padding-block:24px;border-top:1px solid
     <a href="#sorties">Sorties</a>
     <a href="#maj">Mises à jour</a>
     <a href="#actus">Actualités</a>
+    <a href="#live">Live<span class="count live" id="liveCount" hidden></span></a>
     <a href="#meta">Meta</a>
     <a href="#pc">Config PC</a>
     <a href="#amis">Amis<span class="count" id="onlineCount" hidden></span></a>
@@ -355,6 +408,7 @@ footer{color:var(--muted);font-size:13px;padding-block:24px;border-top:1px solid
   <section id="v-sorties"></section>
   <section id="v-maj" hidden></section>
   <section id="v-actus" hidden></section>
+  <section id="v-live" hidden></section>
   <section id="v-meta" hidden></section>
   <section id="v-pc" hidden></section>
   <section id="v-amis" hidden></section>
@@ -368,7 +422,10 @@ footer{color:var(--muted);font-size:13px;padding-block:24px;border-top:1px solid
 <div class="toast" id="toast" hidden role="status"></div>
 
 <script src="/app.js"></script>
+<script src="/platforms.js"></script>
 <script src="/meta.js"></script>
+<script src="/profiles.js"></script>
+<script src="/live.js"></script>
 <script src="/pc.js"></script>
 </body>
 </html>

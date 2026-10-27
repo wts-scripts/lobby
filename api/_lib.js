@@ -102,4 +102,16 @@ const sameStr = (a, b) => { const x = Buffer.from(String(a)), y = Buffer.from(St
 const isAdmin = req => !!process.env.LOBBY_KEY && sameStr(req.headers["x-lobby-key"] || "", process.env.LOBBY_KEY);
 const ipOf = req => String(req.headers["x-forwarded-for"] || req.socket?.remoteAddress || "").split(",")[0].trim();
 
-module.exports = { send, cached, http, params, body, decode, strip, cut, cleanHTML, esc, safeUrl, redis, hasDB, sha, isAdmin, ipOf, crypto };
+/* ---- Twitch : un seul accès (IGDB et lives Twitch) ---- */
+const hasTwitch = () => !!(process.env.TWITCH_CLIENT_ID && process.env.TWITCH_CLIENT_SECRET);
+function twitchToken() {
+  return cached("twitch-token", 3600 * 24, async () => {
+    const u = `https://id.twitch.tv/oauth2/token?client_id=${encodeURIComponent(process.env.TWITCH_CLIENT_ID)}&client_secret=${encodeURIComponent(process.env.TWITCH_CLIENT_SECRET)}&grant_type=client_credentials`;
+    return (await http(u, { method: "POST" })).access_token;
+  });
+}
+async function helix(path) {
+  return http("https://api.twitch.tv/helix/" + path, { headers: { "Client-Id": process.env.TWITCH_CLIENT_ID, Authorization: "Bearer " + await twitchToken() } });
+}
+
+module.exports = { hasTwitch, twitchToken, helix, send, cached, http, params, body, decode, strip, cut, cleanHTML, esc, safeUrl, redis, hasDB, sha, isAdmin, ipOf, crypto };

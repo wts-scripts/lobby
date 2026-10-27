@@ -479,8 +479,8 @@ function renderComptes() {
   const a = S.acc;
   const soon = [["psn", "Présence des amis PlayStation : en préparation."], ["discord", "Statut et jeu en cours via un bot Lobby : en préparation. Discord affiche aussi les jeux Battle.net, EA, Epic…"]];
   const none = ["bnet", "ea", "epic", "riot", "ubi", "nin"];
-  $("#v-comptes").innerHTML = `<div class="row"><h2>Comptes liés</h2></div>
-    <p style="color:var(--muted);margin:-6px 0 16px;max-width:65ch">Tes identifiants restent sur cet appareil. Lobby les envoie seulement pour demander qui est connecté, rien n'est enregistré sur le serveur.</p>
+  ($("#acc-links") || $("#v-comptes")).innerHTML = `<h3 class="subh">Amis en ligne</h3>
+    <p style="color:var(--muted);margin:0 0 16px;max-width:65ch">Pour voir qui joue dans l'onglet Amis. Ces identifiants restent sur cet appareil. Lobby les envoie seulement pour demander qui est connecté, rien n'est enregistré sur le serveur.</p>
     <form class="accounts" id="accForm">
       <div class="acc"><h4>Steam<span class="lvl ok">Officiel</span></h4>
         <p>Colle l'adresse de ton profil Steam. Ta liste d'amis doit être publique (Steam → Profil → Modifier → Confidentialité).</p>
@@ -548,7 +548,7 @@ document.addEventListener("keydown", e => {
 });
 
 /* ---------- onglets ---------- */
-const VIEWS = ["sorties", "maj", "actus", "meta", "pc", "amis", "comptes", "reglages"];
+const VIEWS = ["sorties", "maj", "actus", "live", "meta", "pc", "amis", "comptes", "reglages"];
 const loaded = {};
 function route() {
   const v = VIEWS.includes(location.hash.slice(1)) ? location.hash.slice(1) : "sorties";
@@ -560,6 +560,8 @@ function route() {
   if (v === "reglages") renderReglages();
   if (v === "meta" && window.renderMetaTab) window.renderMetaTab();
   if (v === "pc" && window.renderPC) window.renderPC();
+  if (v === "live" && window.renderLive) window.renderLive();
+  if (window.onRoute) window.onRoute(v);
   if (v === "amis") renderAmis();
   closeDrawer();
 }

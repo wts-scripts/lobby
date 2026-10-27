@@ -2,7 +2,7 @@
 //   GET /api/games                 → prochaines sorties
 //   GET /api/games?q=gta           → recherche
 //   GET /api/games?id=1942         → un jeu
-const { send, cached, http, params } = require("./_lib");
+const { send, cached, http, params, twitchToken: token } = require("./_lib");
 
 const IMG = (id, size) => id ? `https://images.igdb.com/igdb/image/upload/t_${size}/${id}.jpg` : null;
 const FIELDS = [
@@ -12,15 +12,6 @@ const FIELDS = [
   "release_dates.date", "release_dates.human", "release_dates.platform.abbreviation",
   "videos.video_id", "videos.name", "involved_companies.company.name", "involved_companies.developer"
 ].join(",");
-
-async function token() {
-  return cached("igdb-token", 3600 * 24, async () => {
-    const id = process.env.TWITCH_CLIENT_ID, secret = process.env.TWITCH_CLIENT_SECRET;
-    const u = `https://id.twitch.tv/oauth2/token?client_id=${encodeURIComponent(id)}&client_secret=${encodeURIComponent(secret)}&grant_type=client_credentials`;
-    const j = await http(u, { method: "POST" });
-    return j.access_token;
-  });
-}
 
 async function igdb(query) {
   const t = await token();
