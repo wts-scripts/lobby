@@ -12,38 +12,53 @@ function kind(t) {
   return "patch";
 }
 
-// les annonces Steam sont en BBCode : on garde le texte et la première image
+// Balises BBCode de Steam (avec ou sans attributs : [p align="justify"], [img src="…"], [previewyoutube=…]…)
+const TAGS = "p|b|i|u|s|strike|h[1-6]|list|olist|\\*|url|img|quote|code|hr|spoiler|noparse|table|tr|td|th|previewyoutube|video|carousel|dynamiclink|expand|br|center|left|right|color|size|emoticon";
+const ANY_TAG = new RegExp(`\\[\\/?(?:${TAGS})(?:[=\\s][^\\]]*)?\\]`, "gi");
+// « \[ » et « \] » sont des crochets écrits exprès dans le texte : on les met de côté pendant le nettoyage
+const hide = s => s.replace(/\\\[/g, "\u0001").replace(/\\\]/g, "\u0002");
+const show = s => s.replace(/\u0001/g, "[").replace(/\u0002/g, "]");
+const CLAN = "https://clan.akamai.steamstatic.com/images";
+// titres de section écrits entre crochets par les studios : « [ MAP SCRIPTING ] »
+const SECTION = /\[\s+([^\[\]<>]{2,48}?)\s+\]/g;
+const imgOf = raw => (raw.match(/\[img(?:\s+src=["']?([^"'\]\s]+))?[^\]]*\]([^[]*)\[\/img\]/i) || []).slice(1).find(Boolean)
+  || (raw.match(/<img[^>]+src=["']([^"']+)/i) || [])[1] || "";
+
+// résumé : texte brut, sans aucune balise
 function clean(s) {
-  const raw = String(s || "");
-  const img = (raw.match(/\[img\]([^[]+)\[\/img\]/i) || raw.match(/<img[^>]+src=["']([^"']+)/i) || [])[1] || "";
-  const txt = decode(raw)
-    .replace(/\[img\][\s\S]*?\[\/img\]/gi, " ")
-    .replace(/\[\/?[a-z0-9*]+(=[^\]]*)?\]/gi, " ")
+  const raw = String(s || "").replace(/\{STEAM_CLAN_IMAGE\}/g, CLAN);
+  const img = imgOf(raw).trim();
+  const txt = show(hide(decode(raw))
+    .replace(/\[img[^\]]*\][\s\S]*?\[\/img\]/gi, " ")
+    .replace(/\[(previewyoutube|video)[^\]]*\][\s\S]*?\[\/\1\]/gi, " ")
+    .replace(ANY_TAG, " ")
     .replace(/<[^>]+>/g, " ")
-    .replace(/\{STEAM_CLAN_IMAGE\}\S*/g, " ")
-    .replace(/https?:\/\/\S+/g, " ")
+    .replace(/https?:\/\/\S+/g, " "))
+    .replace(SECTION, "$1 ·")
     .replace(/\s+/g, " ").trim();
-  return { txt, img: img.replace("{STEAM_CLAN_IMAGE}", "https://clan.akamai.steamstatic.com/images").trim() };
+  return { txt, img };
 }
 
 // notes complètes pour le lecteur intégré : BBCode Steam → HTML simple et sûr
-const CLAN = "https://clan.akamai.steamstatic.com/images";
 function bbToHtml(raw) {
   raw = String(raw || "").replace(/\{STEAM_CLAN_IMAGE\}/g, CLAN);
-  if (/<(p|br|ul|li|h\d|img|div)\b/i.test(raw) && !/\[(p|b|list|h\d|img)\]/i.test(raw)) return cleanHTML(raw);
-  let s = esc(decode(raw));
+  if (/<(p|br|ul|li|h\d|img|div)\b/i.test(raw) && !/\[(p|b|list|h\d|img)\b/i.test(raw)) return cleanHTML(raw);
+  let s = hide(esc(decode(raw)));
+  const A = "(?:[=\\s][^\\]]*)?";   // attributs éventuels
   const R = [
+    [/\[img\s+src=(?:&quot;|")?([^\]\s&"]+)(?:&quot;|")?[^\]]*\]\s*\[\/img\]/gi, (_, u) => { const x = safeUrl(u); return x ? `<img src="${x}" alt="" loading="lazy">` : ""; }],
     [/\[img(?:=[^\]]*)?\]\s*([^\[\s]+)\s*\[\/img\]/gi, (_, u) => { const x = safeUrl(u); return x ? `<img src="${x}" alt="" loading="lazy">` : ""; }],
-    [/\[url=([^\]]+)\]([\s\S]*?)\[\/url\]/gi, (_, u, t) => { const x = safeUrl(u.replace(/&quot;/g, "")); return x ? `<a href="${x}">${t}</a>` : t; }],
-    [/\[h[1-2]\]/gi, "<h3>"], [/\[\/h[1-2]\]/gi, "</h3>"], [/\[h[3-6]\]/gi, "<h4>"], [/\[\/h[3-6]\]/gi, "</h4>"],
-    [/\[(\/?)(b|i|u)\]/gi, "<$1$2>"], [/\[(\/?)strike\]/gi, ""],
-    [/\[list\]/gi, "<ul>"], [/\[\/list\]/gi, "</ul>"], [/\[olist\]/gi, "<ol>"], [/\[\/olist\]/gi, "</ol>"], [/\[\*\]/g, "<li>"], [/\[\/\*\]/g, "</li>"],
-    [/\[p\]/gi, "<p>"], [/\[\/p\]/gi, "</p>"], [/\[hr\]\s*\[\/hr\]|\[hr\]/gi, "<hr>"],
-    [/\[quote(?:=[^\]]*)?\]/gi, "<blockquote>"], [/\[\/quote\]/gi, "</blockquote>"],
-    [/\[\/?[a-z0-9]+(?:=[^\]]*)?\]/gi, ""]
+    [/\[(previewyoutube|video)[^\]]*\][\s\S]*?\[\/\1\]/gi, ""],
+    [/\[url=(?:&quot;)?([^\]]+?)(?:&quot;)?(?:\s[^\]]*)?\]([\s\S]*?)\[\/url\]/gi, (_, u, t) => { const x = safeUrl(u); return x ? `<a href="${x}">${t}</a>` : t; }],
+    [new RegExp(`\\[h[1-2]${A}\\]`, "gi"), "<h3>"], [/\[\/h[1-2]\]/gi, "</h3>"], [new RegExp(`\\[h[3-6]${A}\\]`, "gi"), "<h4>"], [/\[\/h[3-6]\]/gi, "</h4>"],
+    [/\[(\/?)(b|i|u)\]/gi, "<$1$2>"],
+    [new RegExp(`\\[list${A}\\]`, "gi"), "<ul>"], [/\[\/list\]/gi, "</ul>"], [new RegExp(`\\[olist${A}\\]`, "gi"), "<ol>"], [/\[\/olist\]/gi, "</ol>"], [/\[\*\]/g, "<li>"], [/\[\/\*\]/g, "</li>"],
+    [new RegExp(`\\[p${A}\\]`, "gi"), "<p>"], [/\[\/p\]/gi, "</p>"], [/\[hr\]\s*\[\/hr\]|\[hr\]/gi, "<hr>"],
+    [new RegExp(`\\[quote${A}\\]`, "gi"), "<blockquote>"], [/\[\/quote\]/gi, "</blockquote>"],
+    [ANY_TAG, ""]
   ];
   for (const [re, to] of R) s = s.replace(re, to);
-  return s.replace(/\n{2,}/g, "<br><br>").replace(/\n/g, "<br>").replace(/(<br>\s*){3,}/g, "<br><br>").slice(0, 60000);
+  return show(s).replace(SECTION, "<h4>$1</h4>").replace(/\n{2,}/g, "<br><br>").replace(/\n/g, "<br>").replace(/<\/(p|h3|h4|ul|ol|li|blockquote)>(\s*<br>)+/g, "</$1>").replace(/(<br>\s*)+<h4>/g, "<h4>").replace(/(<br>\s*){3,}/g, "<br><br>").slice(0, 60000);
 }
 
 async function forApp(appid) {
