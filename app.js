@@ -271,21 +271,64 @@ async function openGame(id) {
     <div><div class="meta">${esc(g.g || "")}</div><h3 id="dTitle">${esc(g.t)}</h3></div>
     <div><h5>Sortie</h5><p style="margin:0 0 10px">${esc(fmtDate(g))}</p>${g.exact && g.d > Date.now() ? `<div class="clock" data-clock="${g.d}"></div>` : ""}</div>
     <div><h5>Plateformes</h5><div class="plats">${platTags(g.p)}</div></div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" data-star="${g.id}" aria-pressed="${!!S.follow[g.id]}">${S.follow[g.id] ? "★ Suivi" : "☆ Suivre ce jeu"}</button>
-      ${g.url ? `<a class="btn" href="${esc(g.url)}" target="_blank" rel="noopener">Fiche IGDB</a>` : ""}</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" data-star="${g.id}" aria-pressed="${!!S.follow[g.id]}">${S.follow[g.id] ? "★ Suivi" : "☆ Suivre ce jeu"}</button></div>
+    ${g.video ? `<div><h5>Bande-annonce</h5><div class="video"><iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(g.video)}?rel=0" title="Bande-annonce de ${esc(g.t)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy"></iframe></div></div>` : ""}
+    ${g.shots && g.shots.length ? `<div><h5>Images</h5><div class="gallery">${g.shots.map((u, i) => `<button data-shot="${i}" aria-label="Agrandir l'image ${i + 1}"><img src="${esc(u)}" alt="" loading="lazy"></button>`).join("")}</div></div>` : ""}
     ${g.sum ? `<div><h5>Résumé</h5><span class="sum">${esc(g.sum)}</span></div>` : ""}
+    ${g.dev ? `<div><h5>Studio</h5><span class="sum">${esc(g.dev)}</span></div>` : ""}
     <div><h5>Actualités</h5><div class="mini" id="dNews"><span style="color:var(--muted)">Recherche des actus…</span></div></div>`;
-  dr.hidden = $("#scrim").hidden = false; tick();
+  dr.hidden = $("#scrim").hidden = false; dr.scrollTop = 0; tick();
+  S.drawerGame = g.id; S.shots = g.shots || [];
   dr.querySelector("[data-act=close]").focus();
   try {
     const words = g.t.replace(/[:\-–].*$/, "").trim();
     const j = await api("/api/news?q=" + encodeURIComponent(words));
     if ($("#dTitle") && $("#dTitle").textContent === g.t)
-      $("#dNews").innerHTML = j.news.length ? j.news.slice(0, 5).map(n => `<a href="${esc(n.url)}" target="_blank" rel="noopener"><img src="${esc(n.img || art(n.t, "mountains", 320, 180))}" alt="" data-k="${esc(n.t)}" data-w="320" data-h="180"><span>${esc(n.t)}<br><span class="meta">${esc(n.src)} · ${ago(n.d)}</span></span></a>`).join("")
+      $("#dNews").innerHTML = j.news.length ? j.news.slice(0, 5).map(n => `<a href="#" data-read="${reg("news", n)}"><img src="${esc(n.img || art(n.t, "mountains", 320, 180))}" alt="" data-k="${esc(n.t)}" data-w="320" data-h="180"><span>${esc(n.t)}<br><span class="meta">${esc(n.src)} · ${ago(n.d)}</span></span></a>`).join("")
         : `<span style="color:var(--muted)">Pas d'actu récente sur ce jeu.</span>`;
   } catch { $("#dNews") && ($("#dNews").innerHTML = `<span style="color:var(--muted)">Actus indisponibles pour le moment.</span>`); }
 }
-function closeDrawer() { $("#drawer").hidden = $("#scrim").hidden = true; }
+function closeDrawer() { $("#drawer").hidden = $("#scrim").hidden = true; S.drawerGame = null; if ($("#lightbox")) $("#lightbox").hidden = true; }
+
+/* ---------- lecteur intégré (mises à jour, actus) ---------- */
+const READ = new Map();
+function reg(kind, item) { const k = kind + ":" + (item.url || item.t); READ.set(k, Object.assign({ kind }, item)); return esc(k); }
+function openReader(key) {
+  const it = READ.get(key); if (!it) return;
+  const back = !$("#drawer").hidden && S.drawerGame ? S.drawerGame : null;
+  const label = { patch: "Patch", hotfix: "Correctif", saison: "Saison" };
+  const img = it.img || art(it.t, kindOf("", it.t), 1280, 720);
+  let html = it.html || (it.txt ? "<p>" + esc(it.txt) + "</p>" : "");
+  const plain = html.replace(/<[^>]+>/g, "").trim();
+  const short = it.kind === "news" && plain.length < 600;
+  const src = it.kind === "upd" ? "Steam" : it.src;
+  const dr = $("#drawer");
+  dr.innerHTML = `<div class="dtop">${back ? `<button class="btn" data-back="${esc(back)}">← ${esc((gameById(back) || {}).t || "Retour")}</button>` : "<span></span>"}<button class="btn" data-act="close">Fermer</button></div>
+    <div class="banner"><img src="${esc(img)}" alt="" data-k="${esc(it.t)}" data-w="1280" data-h="720"></div>
+    <div><div class="meta">${it.kind === "upd" ? `<span class="tag ${it.type}">${label[it.type]}</span>${esc(it.game || "")}` : esc(it.src || "")} · ${ago(it.d)}</div><h3 id="dTitle">${esc(it.t)}</h3></div>
+    <div class="prose" id="prose">${html || "<p>Pas de texte pour cet article.</p>"}</div>
+    ${short ? `<p class="note">${esc(it.src)} ne publie qu'un extrait de cet article. La suite est sur son site.</p>` : ""}
+    ${it.url ? `<p class="meta">Source : <a href="${esc(it.url)}" target="_blank" rel="noopener">${short ? "lire l'article complet sur " + esc(src) : esc(src)}</a></p>` : ""}`;
+  // pas de doublon avec l'image du haut ; les liens du texte s'ouvrent à part
+  const p = $("#prose");
+  p.querySelectorAll("img").forEach((im, i) => { if (i === 0 && it.img && im.src === it.img) im.remove(); });
+  p.querySelectorAll("a[href]").forEach(a => { a.target = "_blank"; a.rel = "noopener"; });
+  dr.hidden = $("#scrim").hidden = false; dr.scrollTop = 0;
+  if (!back) S.drawerGame = null;
+  dr.querySelector("[data-act=close]").focus();
+}
+
+/* ---------- images en grand ---------- */
+let lbIndex = 0;
+function lightbox(i) {
+  const list = S.shots || []; if (!list.length) return;
+  lbIndex = (i + list.length) % list.length;
+  let lb = $("#lightbox");
+  if (!lb) { lb = document.createElement("div"); lb.id = "lightbox"; lb.setAttribute("role", "dialog"); lb.setAttribute("aria-label", "Image en grand"); document.body.appendChild(lb); }
+  lb.innerHTML = `<img src="${esc(list[lbIndex])}" alt=""><button class="lb-prev" data-lb="-1" aria-label="Image précédente">‹</button><button class="lb-next" data-lb="1" aria-label="Image suivante">›</button><button class="lb-close" data-lb="x" aria-label="Fermer">×</button><span class="lb-n">${lbIndex + 1} / ${list.length}</span>`;
+  lb.hidden = false;
+}
+
 
 /* ---------- recherche ---------- */
 let searchCache = [], sTimer, sSeq = 0;
@@ -336,7 +379,7 @@ function renderMaj() {
     ${S.updErr ? `<p class="err">${esc(S.updErr)}</p>` : ""}
     ${S.updates === null ? `<div class="empty">Chargement des notes de mise à jour…</div>`
       : !S.updates.length ? `<div class="empty">Aucune mise à jour récente pour ces jeux.</div>`
-      : `<div class="feed">${S.updates.map(u => `<a class="item" href="${esc(u.url)}" target="_blank" rel="noopener">
+      : `<div class="feed">${S.updates.map(u => `<a class="item" href="#" data-read="${reg("upd", Object.assign({ game: name(u.appid) }, u))}">
           <img class="thumb" src="${esc(u.img)}" alt="" data-k="${esc(name(u.appid))}" data-w="460" data-h="215" loading="lazy">
           <div><div class="meta"><span class="tag ${u.type}">${label[u.type]}</span>${esc(name(u.appid))} · ${ago(u.d)}</div>
           <h4>${esc(u.t)}</h4><p>${esc(u.txt)}</p></div></a>`).join("")}</div>`}`;
@@ -366,7 +409,7 @@ function renderActus() {
     ${S.newsFailed.length ? `<p class="note">Indisponible pour le moment : ${esc(S.newsFailed.join(", "))}.</p>` : ""}
     ${S.news === null ? `<div class="news">${'<div class="skel" style="aspect-ratio:4/3.4"></div>'.repeat(6)}</div>`
       : !S.news.length ? `<div class="empty">Aucune actu pour le moment.</div>`
-      : `<div class="news">${S.news.map(n => `<a class="ncard" href="${esc(n.url)}" target="_blank" rel="noopener">
+      : `<div class="news">${S.news.map(n => `<a class="ncard" href="#" data-read="${reg("news", n)}">
           <img src="${esc(n.img || art(n.t, kindOf("", n.t), 640, 360))}" alt="" data-k="${esc(n.t)}" loading="lazy">
           <div><span class="meta">${esc(n.src)} · ${ago(n.d)}</span><h4>${esc(n.t)}</h4>${n.txt ? `<p>${esc(n.txt)}</p>` : ""}</div></a>`).join("")}</div>`}`;
 }
@@ -472,6 +515,11 @@ function toggleFollow(id) {
 }
 document.addEventListener("click", e => {
   const t = e.target;
+  const rd = t.closest("[data-read]"); if (rd) { e.preventDefault(); openReader(rd.dataset.read); return; }
+  const bk = t.closest("[data-back]"); if (bk) { openGame(bk.dataset.back); return; }
+  const sh = t.closest("[data-shot]"); if (sh) { lightbox(+sh.dataset.shot); return; }
+  const lbb = t.closest("[data-lb]"); if (lbb) { if (lbb.dataset.lb === "x") $("#lightbox").hidden = true; else lightbox(lbIndex + +lbb.dataset.lb); return; }
+  if (t.id === "lightbox") { t.hidden = true; return; }
   const pref = t.closest("[data-pref]"); if (pref) { PREFS[pref.dataset.pref] = pref.dataset.val; savePrefs(); return; }
   const star = t.closest("[data-star]"); if (star) { e.stopPropagation(); toggleFollow(star.dataset.star); return; }
   const o = t.closest("[data-open]"); if (o) { $("#results").hidden = true; $("#q").value = ""; openGame(o.dataset.open); return; }
@@ -492,6 +540,8 @@ document.addEventListener("click", e => {
   if (!t.closest(".addapp") && $("#appres")) $("#appres").hidden = true;
 });
 document.addEventListener("keydown", e => {
+  const lb = $("#lightbox");
+  if (lb && !lb.hidden) { if (e.key === "Escape") lb.hidden = true; if (e.key === "ArrowRight") lightbox(lbIndex + 1); if (e.key === "ArrowLeft") lightbox(lbIndex - 1); return; }
   if (e.key === "Escape") closeDrawer();
   if ((e.key === "Enter" || e.key === " ") && e.target.matches("[role=button][data-open]")) { e.preventDefault(); openGame(e.target.dataset.open); }
 });

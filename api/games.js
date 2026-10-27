@@ -9,7 +9,8 @@ const FIELDS = [
   "name", "slug", "url", "summary", "hypes", "first_release_date",
   "cover.image_id", "artworks.image_id", "screenshots.image_id",
   "platforms.abbreviation", "platforms.name", "genres.name",
-  "release_dates.date", "release_dates.human", "release_dates.platform.abbreviation"
+  "release_dates.date", "release_dates.human", "release_dates.platform.abbreviation",
+  "videos.video_id", "videos.name", "involved_companies.company.name", "involved_companies.developer"
 ].join(",");
 
 async function token() {
@@ -48,7 +49,10 @@ function shape(g) {
     cover: IMG(g.cover && g.cover.image_id, "cover_big"),
     art: IMG(art && art.image_id, "1080p"),
     hype: g.hypes || 0,
-    sum: g.summary || ""
+    sum: g.summary || "",
+    shots: (g.screenshots || []).slice(0, 8).map(x => IMG(x.image_id, "screenshot_big")).concat((g.artworks || []).slice(1, 4).map(x => IMG(x.image_id, "screenshot_big"))),
+    video: ((g.videos || []).find(v => /trailer|bande/i.test(v.name || "")) || (g.videos || [])[0] || {}).video_id || null,
+    dev: (g.involved_companies || []).filter(c => c.developer && c.company).map(c => c.company.name).slice(0, 2).join(", ")
   };
 }
 

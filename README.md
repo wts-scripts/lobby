@@ -36,6 +36,11 @@ Aucune base de données nécessaire : les réponses sont gardées en cache par V
 ### Facultatif
 - `NEWS_FEEDS` : pour choisir les sites d'actus. Format : `Nom|adresse du flux RSS`, séparés par des virgules. Exemple : `Jeuxvideo.com|https://www.jeuxvideo.com/rss/rss.xml, Steam|https://store.steampowered.com/feeds/news.xml`. Un flux qui ne répond pas est simplement ignoré (il apparaît en note dans l'onglet Actualités).
 
+## Tout dans l'appli
+- **Mises à jour** : les notes de patch complètes s'ouvrent dans un lecteur intégré (texte, titres, listes, images de l'annonce Steam).
+- **Actualités** : l'article s'ouvre dans le même lecteur avec le texte que le site publie dans son flux. Beaucoup de sites n'y mettent qu'un extrait : Lobby l'indique et propose la suite sur le site.
+- **Fiche jeu** : bande-annonce lue dans l'appli, captures d'écran en galerie (plein écran au clic), résumé, studio, actus du jeu.
+
 ## Apparence (onglet Réglages)
 - **Mode** : Système (suit le PC ou le téléphone), Sombre ou Clair.
 - **Thème** : Nuit (par défaut), WTS, Graphite, Citron, Sunset, Sable, Sakura, Océan, Néon — les mêmes que Cura, chacun en sombre et en clair.

@@ -1,7 +1,7 @@
 // Lobby · mises à jour des jeux (annonces officielles publiées sur Steam, sans clé)
 //   GET /api/updates?apps=730,271590   → dernières mises à jour de ces jeux
 //   GET /api/updates?search=rust       → trouver un jeu Steam à suivre
-const { send, cached, http, params, decode, cut } = require("./_lib");
+const { send, cached, http, params, decode, cut, cleanHTML, esc, safeUrl } = require("./_lib");
 
 const header = id => `https://cdn.cloudflare.steamstatic.com/steam/apps/${id}/header.jpg`;
 const PATCH = /\b(update|patch|hotfix|mise à jour|mise a jour|maj|correctif|release notes|changelog|v\d+(\.\d+)+|season|saison|chapter|chapitre)\b/i;
@@ -26,6 +26,26 @@ function clean(s) {
   return { txt, img: img.replace("{STEAM_CLAN_IMAGE}", "https://clan.akamai.steamstatic.com/images").trim() };
 }
 
+// notes complètes pour le lecteur intégré : BBCode Steam → HTML simple et sûr
+const CLAN = "https://clan.akamai.steamstatic.com/images";
+function bbToHtml(raw) {
+  raw = String(raw || "").replace(/\{STEAM_CLAN_IMAGE\}/g, CLAN);
+  if (/<(p|br|ul|li|h\d|img|div)\b/i.test(raw) && !/\[(p|b|list|h\d|img)\]/i.test(raw)) return cleanHTML(raw);
+  let s = esc(decode(raw));
+  const R = [
+    [/\[img(?:=[^\]]*)?\]\s*([^\[\s]+)\s*\[\/img\]/gi, (_, u) => { const x = safeUrl(u); return x ? `<img src="${x}" alt="" loading="lazy">` : ""; }],
+    [/\[url=([^\]]+)\]([\s\S]*?)\[\/url\]/gi, (_, u, t) => { const x = safeUrl(u.replace(/&quot;/g, "")); return x ? `<a href="${x}">${t}</a>` : t; }],
+    [/\[h[1-2]\]/gi, "<h3>"], [/\[\/h[1-2]\]/gi, "</h3>"], [/\[h[3-6]\]/gi, "<h4>"], [/\[\/h[3-6]\]/gi, "</h4>"],
+    [/\[(\/?)(b|i|u)\]/gi, "<$1$2>"], [/\[(\/?)strike\]/gi, ""],
+    [/\[list\]/gi, "<ul>"], [/\[\/list\]/gi, "</ul>"], [/\[olist\]/gi, "<ol>"], [/\[\/olist\]/gi, "</ol>"], [/\[\*\]/g, "<li>"], [/\[\/\*\]/g, "</li>"],
+    [/\[p\]/gi, "<p>"], [/\[\/p\]/gi, "</p>"], [/\[hr\]\s*\[\/hr\]|\[hr\]/gi, "<hr>"],
+    [/\[quote(?:=[^\]]*)?\]/gi, "<blockquote>"], [/\[\/quote\]/gi, "</blockquote>"],
+    [/\[\/?[a-z0-9]+(?:=[^\]]*)?\]/gi, ""]
+  ];
+  for (const [re, to] of R) s = s.replace(re, to);
+  return s.replace(/\n{2,}/g, "<br><br>").replace(/\n/g, "<br>").replace(/(<br>\s*){3,}/g, "<br><br>").slice(0, 60000);
+}
+
 async function forApp(appid) {
   return cached("news:" + appid, 900, async () => {
     const j = await http(`https://api.steampowered.com/ISteamNews/GetNewsForApp/v2/?appid=${appid}&count=15&maxlength=0&feeds=steam_community_announcements&format=json`);
@@ -37,7 +57,7 @@ async function forApp(appid) {
         const c = clean(n.contents);
         return {
           appid, t: decode(n.title), url: n.url, d: n.date * 1000, type: kind(n.title),
-          txt: cut(c.txt, 260), img: /^https:/.test(c.img) ? c.img : header(appid), cover: header(appid)
+          txt: cut(c.txt, 260), html: bbToHtml(n.contents), author: n.author || "", img: /^https:/.test(c.img) ? c.img : header(appid), cover: header(appid)
         };
       });
   });

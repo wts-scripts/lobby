@@ -212,6 +212,31 @@ h2{font:700 calc(24px*var(--ds))/1.2 var(--display);letter-spacing:.03em;text-tr
 .fnt .fd{font-size:26px;line-height:1.1;font-weight:700}
 .fnt .fn{font-size:18px;color:var(--accent);font-variant-numeric:tabular-nums}
 .fnt .fb{font-size:14px;color:var(--muted)}
+/* Lecteur intégré, vidéo, galerie */
+.prose{font-size:16px;line-height:1.65;color:var(--fg);overflow-wrap:anywhere;min-width:0}
+.prose h3{font:700 calc(20px*var(--ds))/1.25 var(--display);margin:22px 0 8px}
+.prose h4{font:600 calc(17px*var(--ds))/1.3 var(--display);margin:18px 0 6px}
+.prose p{margin:0 0 12px}
+.prose ul,.prose ol{margin:0 0 12px;padding-left:20px}
+.prose li{margin:3px 0}
+.prose img{display:block;max-width:100%;height:auto;border-radius:8px;margin:12px 0}
+.prose blockquote{margin:12px 0;padding:8px 14px;border-left:3px solid var(--line);color:var(--muted)}
+.prose hr{border:0;border-top:1px solid var(--line);margin:18px 0}
+.prose a{color:var(--accent)}
+.video{position:relative;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000}
+.video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.gallery{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(200px,70%);gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px}
+.gallery button{padding:0;border:0;background:var(--raise);border-radius:8px;overflow:hidden;cursor:zoom-in;scroll-snap-align:start;aspect-ratio:16/9}
+.gallery img{width:100%;height:100%;object-fit:cover;display:block}
+.gallery button:focus-visible{outline:2px solid var(--accent)}
+#lightbox{position:fixed;inset:0;z-index:40;background:rgb(5 4 10/.94);display:grid;place-items:center;padding:calc(48px + env(safe-area-inset-top,0px)) 16px calc(48px + env(safe-area-inset-bottom,0px))}
+#lightbox img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px}
+#lightbox button{position:absolute;background:rgb(255 255 255/.12);color:#fff;border:0;border-radius:50%;width:48px;height:48px;font-size:30px;line-height:1;cursor:pointer}
+#lightbox button:focus-visible{outline:2px solid #fff}
+#lightbox .lb-prev{left:max(12px,env(safe-area-inset-left,0px));top:50%;transform:translateY(-50%)}
+#lightbox .lb-next{right:max(12px,env(safe-area-inset-right,0px));top:50%;transform:translateY(-50%)}
+#lightbox .lb-close{right:max(12px,env(safe-area-inset-right,0px));top:calc(12px + env(safe-area-inset-top,0px))}
+#lightbox .lb-n{position:absolute;bottom:calc(16px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);color:rgb(255 255 255/.8);font:500 13px var(--mono)}
 footer{color:var(--muted);font-size:13px;padding-block:24px;border-top:1px solid var(--line)}
 @media (prefers-reduced-motion:no-preference){.game,.btn,.chip,.ncard,.item{transition:border-color .15s,background .15s}}
 </style>
@@ -245,7 +270,7 @@ footer{color:var(--muted);font-size:13px;padding-block:24px;border-top:1px solid
   <section id="v-comptes" hidden></section>
   <section id="v-reglages" hidden></section>
 </main>
-<footer class="wrap">Données de jeux : IGDB. Mises à jour : annonces Steam. Actus : flux RSS des sites cités, chaque article ouvre le site d'origine.</footer>
+<footer class="wrap">Données de jeux : IGDB. Mises à jour : annonces Steam. Actus : flux RSS des sites cités. Bandes-annonces : YouTube.</footer>
 
 <div class="scrim" id="scrim" hidden></div>
 <aside class="drawer" id="drawer" hidden role="dialog" aria-modal="true" aria-labelledby="dTitle"></aside>

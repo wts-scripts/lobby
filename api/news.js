@@ -2,7 +2,7 @@
 //   GET /api/news            → dernières actus de tous les flux
 //   GET /api/news?q=fable    → actus qui parlent d'un jeu
 // Flux modifiables sur Vercel : NEWS_FEEDS = "Nom|https://…/rss, Nom 2|https://…"
-const { send, cached, http, params, decode, strip, cut } = require("./_lib");
+const { send, cached, http, params, decode, strip, cut, cleanHTML } = require("./_lib");
 
 const DEFAULT_FEEDS = [
   "Jeuxvideo.com|https://www.jeuxvideo.com/rss/rss.xml",
@@ -38,6 +38,8 @@ function parse(xml, source) {
     return {
       t: strip(tag(it, "title")),
       txt: cut(strip(desc), 180),
+      // ce que le site publie lui-même dans son flux (souvent un extrait), pour le lecteur intégré
+      html: cleanHTML(tag(it, "content:encoded") || desc, 30000),
       url: /^https?:/.test(link) ? link : null,
       img: /^https?:/.test(img) ? img.replace(/^http:/, "https:") : null,
       d: isNaN(date) ? null : date,

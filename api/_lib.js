@@ -55,4 +55,34 @@ const decode = s => String(s || "")
 const strip = s => decode(s).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 const cut = (s, n) => s.length > n ? s.slice(0, n - 1).replace(/\s+\S*$/, "") + "…" : s;
 
-module.exports = { send, cached, http, params, body, decode, strip, cut };
+/* ---- texte riche sûr pour le lecteur intégré ----
+   Tout est échappé, puis seules quelques balises simples sont reconstruites, sans aucun attribut
+   sauf src / href en https. Rien d'autre (script, style, iframe, on…=) ne peut passer. */
+const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const safeUrl = u => { u = decode(u).trim().replace(/^\/\//, "https://").replace(/^http:/, "https:"); return /^https:\/\/[^\s"'<>]+$/.test(u) ? u : ""; };
+const KEEP = { p: 1, br: 1, b: 1, strong: 1, i: 1, em: 1, u: 1, ul: 1, ol: 1, li: 1, h1: "h3", h2: "h3", h3: "h3", h4: "h4", h5: "h4", h6: "h4", blockquote: 1, hr: 1, img: 1, a: 1, figure: 1, figcaption: 1, span: 0, div: "p" };
+function cleanHTML(html, max = 40000) {
+  let s = String(html || "").replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")
+    .replace(/<(script|style|iframe|object|embed|noscript|svg|form|button|select|textarea)[\s\S]*?<\/\1>/gi, " ")
+    .replace(/<!--[\s\S]*?-->/g, " ");
+  // un contenu tout échappé (&lt;p&gt;) est d'abord décodé une fois
+  if (!/<[a-z]/i.test(s) && /&lt;[a-z]/i.test(s)) s = decode(s);
+  const out = [];
+  for (const tok of s.split(/(<[^>]*>)/)) {
+    if (!tok) continue;
+    if (tok[0] !== "<") { out.push(esc(decode(tok))); continue; }
+    const m = tok.match(/^<\s*(\/?)\s*([a-z0-9]+)([^>]*)>$/i); if (!m) continue;
+    const close = m[1], name = m[2].toLowerCase(), rule = KEEP[name];
+    if (!rule) continue;
+    const tag = rule === 1 ? name : rule;
+    if (close) { if (!["br", "hr", "img"].includes(tag)) out.push(`</${tag}>`); continue; }
+    if (tag === "img") { const src = safeUrl((m[3].match(/\bsrc\s*=\s*["']([^"']+)/i) || [])[1] || ""); if (src) out.push(`<img src="${esc(src)}" alt="" loading="lazy">`); continue; }
+    if (tag === "a") { const href = safeUrl((m[3].match(/\bhref\s*=\s*["']([^"']+)/i) || [])[1] || ""); out.push(href ? `<a href="${esc(href)}">` : "<a>"); continue; }
+    out.push(`<${tag}>`);
+  }
+  let r = out.join("").replace(/(<br>\s*){3,}/g, "<br><br>").replace(/<p>\s*<\/p>/g, "").trim();
+  if (r.length > max) r = r.slice(0, max).replace(/<[^>]*$/, "") + "…";
+  return r;
+}
+
+module.exports = { send, cached, http, params, body, decode, strip, cut, cleanHTML, esc, safeUrl };
