@@ -548,7 +548,7 @@ document.addEventListener("keydown", e => {
 });
 
 /* ---------- onglets ---------- */
-const VIEWS = ["sorties", "maj", "actus", "amis", "comptes", "reglages"];
+const VIEWS = ["sorties", "maj", "actus", "meta", "pc", "amis", "comptes", "reglages"];
 const loaded = {};
 function route() {
   const v = VIEWS.includes(location.hash.slice(1)) ? location.hash.slice(1) : "sorties";
@@ -558,6 +558,8 @@ function route() {
   if (v === "actus" && !loaded.actus) { loaded.actus = 1; renderActus(); loadNews(); }
   if (v === "comptes") renderComptes();
   if (v === "reglages") renderReglages();
+  if (v === "meta" && window.renderMetaTab) window.renderMetaTab();
+  if (v === "pc" && window.renderPC) window.renderPC();
   if (v === "amis") renderAmis();
   closeDrawer();
 }
@@ -579,4 +581,6 @@ window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); instal
 $("#install").addEventListener("click", async () => { if (!installEvt) return; installEvt.prompt(); await installEvt.userChoice; installEvt = null; $("#install").hidden = true; });
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => {});
 
-renderSorties(); route(); loadGames(); loadFriends();
+// premier affichage une fois tous les scripts chargés (Meta, Config PC)
+renderSorties(); loadGames(); loadFriends();
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", route); else setTimeout(route, 0);

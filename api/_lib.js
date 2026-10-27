@@ -85,4 +85,21 @@ function cleanHTML(html, max = 40000) {
   return r;
 }
 
-module.exports = { send, cached, http, params, body, decode, strip, cut, cleanHTML, esc, safeUrl };
+/* ---- base de données (Upstash Redis via REST, comme Cura) ---- */
+const R_URL = () => process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
+const R_TOK = () => process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
+const hasDB = () => !!(R_URL() && R_TOK());
+async function redis(...cmd) {
+  if (!hasDB()) throw Object.assign(new Error("Base de données non connectée : ajoute Upstash Redis au projet Vercel (onglet Storage)."), { status: 503 });
+  const r = await fetch(R_URL(), { method: "POST", headers: { Authorization: "Bearer " + R_TOK(), "content-type": "application/json" }, body: JSON.stringify(cmd.map(String)) });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok || j.error) throw new Error("Base de données : " + (j.error || r.status));
+  return j.result;
+}
+const crypto = require("crypto");
+const sha = s => crypto.createHash("sha256").update(String(s)).digest("hex");
+const sameStr = (a, b) => { const x = Buffer.from(String(a)), y = Buffer.from(String(b)); return x.length === y.length && crypto.timingSafeEqual(x, y); };
+const isAdmin = req => !!process.env.LOBBY_KEY && sameStr(req.headers["x-lobby-key"] || "", process.env.LOBBY_KEY);
+const ipOf = req => String(req.headers["x-forwarded-for"] || req.socket?.remoteAddress || "").split(",")[0].trim();
+
+module.exports = { send, cached, http, params, body, decode, strip, cut, cleanHTML, esc, safeUrl, redis, hasDB, sha, isAdmin, ipOf, crypto };

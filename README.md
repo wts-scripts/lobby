@@ -31,7 +31,9 @@ Aucune base de données nécessaire : les réponses sont gardées en cache par V
    - https://steamcommunity.com/dev/apikey → nom de domaine : ton adresse Vercel → copie la clé.
    - Vercel : `STEAM_API_KEY` = la clé.
 
-5. Deployments → ⋯ → **Redeploy**.
+5. **Meta (classes d'armes partagées)** : dans le projet Vercel → onglet **Storage** → Create Database → **Upstash for Redis** (plan gratuit) → connecte-la au projet `wts-lobby`. C'est la même base que pour Cura.
+6. **Code administrateur** : `LOBBY_KEY` = un code à toi (une phrase longue). Il permet de voir les signalements et de supprimer n'importe quelle publication de la Meta (onglet Meta → Administration).
+7. Deployments → ⋯ → **Redeploy**.
 
 ### Facultatif
 - `NEWS_FEEDS` : pour choisir les sites d'actus. Format : `Nom|adresse du flux RSS`, séparés par des virgules. Exemple : `Jeuxvideo.com|https://www.jeuxvideo.com/rss/rss.xml, Steam|https://store.steampowered.com/feeds/news.xml`. Un flux qui ne répond pas est simplement ignoré (il apparaît en note dans l'onglet Actualités).
@@ -40,6 +42,22 @@ Aucune base de données nécessaire : les réponses sont gardées en cache par V
 - **Mises à jour** : les notes de patch complètes s'ouvrent dans un lecteur intégré (texte, titres, listes, images de l'annonce Steam).
 - **Actualités** : l'article s'ouvre dans le même lecteur avec le texte que le site publie dans son flux. Beaucoup de sites n'y mettent qu'un extrait : Lobby l'indique et propose la suite sur le site.
 - **Fiche jeu** : bande-annonce lue dans l'appli, captures d'écran en galerie (plein écran au clic), résumé, studio, actus du jeu.
+
+## Meta
+- Chacun publie une classe : jeu, arme, type, mode, accessoires (emplacement + accessoire), code de partage, conseils, pseudo. Pas besoin de compte.
+- Filtre par jeu, recherche par arme, tri **Populaires** (votes) ou **Récentes**. Le code de partage se copie en un clic.
+- Un vote par appareil (on peut le retirer). L'auteur peut supprimer sa publication depuis l'appareil qui l'a publiée.
+- Modération : une publication signalée par 5 appareils différents est masquée automatiquement ; l'admin (code `LOBBY_KEY`) voit les signalements et peut tout supprimer.
+- Anti-spam : 6 publications maximum par heure et par connexion.
+- Sans la base Upstash, l'onglet affiche comment l'activer.
+
+## Config PC
+- 4 configs de départ (Entrée, Milieu, Haut de gamme, Ultime) ou choix pièce par pièce : processeur, carte mère, mémoire, carte graphique, stockage, refroidissement, alimentation, boîtier.
+- Vérifications : socket processeur / carte mère, DDR4 / DDR5, ventirad fourni ou non, emplacements M.2, longueur de la carte graphique / boîtier, puissance de l'alimentation (calcul de la consommation + marge), câble 12V-2x6, équilibre processeur / carte graphique, mémoire et VRAM.
+- Performances estimées en 1080p, 1440p, 4K et en jeux compétitifs (indicatif).
+- Prix indicatifs modifiables (chacun tape le prix trouvé), total automatique.
+- Enregistrer plusieurs configs, copier la liste, ou **copier un lien** qui ouvre la config telle quelle chez quelqu'un d'autre.
+- La liste des composants et leurs prix sont dans `pc.js` (tableau `D`), faciles à mettre à jour.
 
 ## Apparence (onglet Réglages)
 - **Mode** : Système (suit le PC ou le téléphone), Sombre ou Clair.
