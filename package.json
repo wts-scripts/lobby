@@ -1,0 +1,7 @@
+{
+  "name": "lobby",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Lobby by WTS — sorties de jeux, mises à jour, actus et amis connectés",
+  "engines": { "node": ">=18" }
+}
