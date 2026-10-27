@@ -179,6 +179,7 @@ const bannerOf = g => g.art || art(g.t, kindOf(g.g, g.t), 1280, 720);
 // une image distante qui ne charge pas → illustration de secours
 document.addEventListener("error", e => {
   const img = e.target; if (img.tagName !== "IMG" || img.dataset.fb === "1") return;
+  if (img.dataset.alt) { const alt = img.dataset.alt; delete img.dataset.alt; img.src = alt; return; }   // 2e image avant l'illustration
   img.dataset.fb = "1"; const k = img.dataset.k || img.alt || "lobby";
   img.src = art(k, img.dataset.kind || kindOf("", k), +(img.dataset.w || 640), +(img.dataset.h || 360));
 }, true);
@@ -304,14 +305,14 @@ function openReader(key) {
   const src = it.kind === "upd" ? "Steam" : it.src;
   const dr = $("#drawer");
   dr.innerHTML = `<div class="dtop">${back ? `<button class="btn" data-back="${esc(back)}">← ${esc((gameById(back) || {}).t || "Retour")}</button>` : "<span></span>"}<button class="btn" data-act="close">Fermer</button></div>
-    <div class="banner"><img src="${esc(img)}" alt="" data-k="${esc(it.t)}" data-w="1280" data-h="720"></div>
+    <div class="banner"><img src="${esc(it.hero && !it.ownImg ? it.hero : img)}" ${it.hero && !it.ownImg ? `data-alt="${esc(img)}"` : ""} alt="" data-k="${esc(it.t)}" data-w="1280" data-h="720"></div>
     <div><div class="meta">${it.kind === "upd" ? `<span class="tag ${it.type}">${label[it.type]}</span>${esc(it.game || "")}` : esc(it.src || "")} · ${ago(it.d)}</div><h3 id="dTitle">${esc(it.t)}</h3></div>
     <div class="prose" id="prose">${html || "<p>Pas de texte pour cet article.</p>"}</div>
     ${short ? `<p class="note">${esc(it.src)} ne publie qu'un extrait de cet article. La suite est sur son site.</p>` : ""}
     ${it.url ? `<p class="meta">Source : <a href="${esc(it.url)}" target="_blank" rel="noopener">${short ? "lire l'article complet sur " + esc(src) : esc(src)}</a></p>` : ""}`;
   // pas de doublon avec l'image du haut ; les liens du texte s'ouvrent à part
   const p = $("#prose");
-  p.querySelectorAll("img").forEach((im, i) => { if (i === 0 && it.img && im.src === it.img) im.remove(); });
+  p.querySelectorAll("img").forEach((im, i) => { if (i === 0 && it.img && im.src === it.img && (it.ownImg || !it.hero)) im.remove(); });
   p.querySelectorAll("a[href]").forEach(a => { a.target = "_blank"; a.rel = "noopener"; });
   dr.hidden = $("#scrim").hidden = false; dr.scrollTop = 0;
   if (!back) S.drawerGame = null;

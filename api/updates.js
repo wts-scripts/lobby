@@ -4,6 +4,7 @@
 const { send, cached, http, params, decode, cut, cleanHTML, esc, safeUrl } = require("./_lib");
 
 const header = id => `https://cdn.cloudflare.steamstatic.com/steam/apps/${id}/header.jpg`;
+const hero = id => `https://cdn.cloudflare.steamstatic.com/steam/apps/${id}/library_hero.jpg`;   // grande image 3840×1240
 const PATCH = /\b(update|patch|hotfix|mise à jour|mise a jour|maj|correctif|release notes|changelog|v\d+(\.\d+)+|season|saison|chapter|chapitre)\b/i;
 
 function kind(t) {
@@ -72,7 +73,7 @@ async function forApp(appid) {
         const c = clean(n.contents);
         return {
           appid, t: decode(n.title), url: n.url, d: n.date * 1000, type: kind(n.title),
-          txt: cut(c.txt, 260), html: bbToHtml(n.contents), author: n.author || "", img: /^https:/.test(c.img) ? c.img : header(appid), cover: header(appid)
+          txt: cut(c.txt, 260), html: bbToHtml(n.contents), author: n.author || "", img: /^https:/.test(c.img) ? c.img : header(appid), ownImg: /^https:/.test(c.img), hero: hero(appid), cover: header(appid)
         };
       });
   });
