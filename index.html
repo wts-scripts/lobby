@@ -376,6 +376,26 @@ nav .count.live{color:#fff;background:#e91916}
 .livebar{display:grid;gap:4px;text-align:left;background:var(--raise);border:1px solid var(--line);border-radius:10px;padding:10px 12px;color:var(--fg);font:600 15px var(--body);cursor:pointer}
 .livebar .livetag{position:static;justify-self:start}
 .lchat{width:100%;height:520px;border:0;border-radius:10px;background:var(--raise)}
+/* Menu configurable */
+.navsep{display:flex;align-items:center;gap:6px;flex:none;margin:0 6px;padding-left:12px;border-left:1px solid var(--line);font:600 calc(10px*var(--ds)) var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);white-space:nowrap;align-self:center;min-height:20px}
+.navsep:empty{padding-left:0;margin:0 8px}
+.mlist{list-style:none;margin:0;padding:0;display:grid;gap:6px;max-width:640px}
+.mrow{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;gap:8px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:6px 10px}
+.mrow.sep{grid-template-columns:auto auto auto minmax(0,1fr) auto;background:transparent;border-style:dashed}
+.mrow.off input[data-mlabel]{opacity:.55}
+.mrow.drag{opacity:.4}
+.mrow.over{border-color:var(--accent)}
+.grip{cursor:grab;color:var(--muted);letter-spacing:-2px;user-select:none}
+.mv{display:flex;gap:2px}
+.mv button{width:30px;height:30px;border:1px solid var(--line);background:var(--raise);color:var(--fg);border-radius:6px;cursor:pointer;font-size:14px}
+.mv button[disabled]{opacity:.35;cursor:default}
+.mv button:focus-visible{outline:2px solid var(--accent)}
+.mrow input[data-mlabel]{width:100%;min-width:0;font:600 15px var(--body);color:var(--fg);background:var(--raise);border:1px solid var(--line);border-radius:8px;padding:7px 10px}
+.mrow input[data-mlabel]:focus{outline:2px solid var(--accent)}
+.mkind{font:600 12px var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.mvis{display:flex;gap:6px;align-items:center;font-size:14px;white-space:nowrap}
+.mvis input{width:18px;height:18px;accent-color:var(--accent)}
+@media (max-width:480px){.grip{display:none}.mrow{grid-template-columns:auto minmax(0,1fr) auto}.mrow.sep{grid-template-columns:auto auto minmax(0,1fr) auto}}
 footer{color:var(--muted);font-size:13px;padding-block:24px;border-top:1px solid var(--line)}
 @media (prefers-reduced-motion:no-preference){.game,.btn,.chip,.ncard,.item{transition:border-color .15s,background .15s}}
 </style>
@@ -422,6 +442,7 @@ footer{color:var(--muted);font-size:13px;padding-block:24px;border-top:1px solid
 <div class="toast" id="toast" hidden role="status"></div>
 
 <script src="/app.js"></script>
+<script src="/menu.js"></script>
 <script src="/platforms.js"></script>
 <script src="/meta.js"></script>
 <script src="/profiles.js"></script>

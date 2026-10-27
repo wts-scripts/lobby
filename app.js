@@ -446,7 +446,7 @@ function track(list) {
 function renderAmis() {
   const el = $("#v-amis");
   const online = (S.friends || []).filter(f => f.s !== "offline").length;
-  const oc = $("#onlineCount"); oc.hidden = !S.friends; oc.textContent = online;
+  const oc = $("#onlineCount"); if (oc) { oc.hidden = !S.friends; oc.textContent = online; }
   if (!hasAccounts()) {
     el.innerHTML = `<div class="row"><h2>Amis</h2></div><div class="empty">Lie tes comptes Steam, Xbox ou ton serveur FiveM pour voir qui joue en ce moment.<br><br><a class="btn primary" href="#comptes">Lier mes comptes</a></div>`;
     return;

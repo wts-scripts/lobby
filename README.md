@@ -79,7 +79,8 @@ Aucune base de données nécessaire : les réponses sont gardées en cache par V
 - **Mode** : Système (suit le PC ou le téléphone), Sombre ou Clair.
 - **Thème** : Nuit (par défaut), WTS, Graphite, Citron, Sunset, Sable, Sakura, Océan, Néon — les mêmes que Cura, chacun en sombre et en clair.
 - **Police** : 20 associations titres + texte + chiffres, en deux séries (tech et futuriste, gras et impactant) — Chakra Petch par défaut. Les tailles sont ajustées pour que chaque police garde le même encombrement.
-Ces choix restent sur l'appareil.
+- **Menu** : ordre des catégories (glisser-déposer ou flèches), renommer, masquer, ajouter des séparateurs avec ou sans titre. Réglages reste toujours visible.
+Ces choix restent sur l'appareil. Avec le code admin, le bouton « Utiliser ce menu pour tout le monde » en fait le menu par défaut du site (pour ceux qui n'ont pas personnalisé le leur).
 
 ## Pour chaque personne (onglet Comptes)
 - **Steam** : coller l'adresse de son profil. La liste d'amis doit être publique (Profil → Modifier → Confidentialité).
