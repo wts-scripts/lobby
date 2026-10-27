@@ -24,6 +24,82 @@ const S = {
   updates: null, updErr: "", news: null, newsFailed: [], friends: null, friendErr: [], friendsAt: 0
 };
 
+/* ---------- apparence : mode, thème, police ---------- */
+const PREFS = Object.assign({ theme: "system", palette: "nuit", font: "chakra" }, store.get("prefs", {}));
+// ordre : fond, surface, relief, trait, texte, texte doux, accent, accent 2, texte sur accent
+const PALETTES = [
+  { id: "nuit", name: "Nuit", note: "Violet nuit et orange", dark: ["#12101c", "#1b1829", "#252136", "#332e4a", "#ece9f5", "#9a94b3", "#ff8a2a", "#8b6cff", "#1a0f02"], light: ["#f6f4fb", "#ffffff", "#eeeaf8", "#dcd6ec", "#1c1830", "#615a7d", "#d9620a", "#6a4ce0", "#ffffff"] },
+  { id: "wts", name: "WTS", note: "Le thème du site WTS", dark: ["#0a0a0a", "#111111", "#171717", "#262626", "#f3f3f4", "#a1a1aa", "#ff8a1f", "#a670f5", "#0a0a0a"], light: ["#ffffff", "#fafafa", "#f4f4f5", "#e5e5e5", "#111111", "#52525b", "#d9620b", "#6d16e2", "#ffffff"] },
+  { id: "graphite", name: "Graphite", note: "Noir et blanc, accent bleu", dark: ["#0d0d0f", "#151518", "#1c1c20", "#2a2a30", "#f4f4f5", "#a1a1aa", "#e4e4e7", "#60a5fa", "#0d0d0f"], light: ["#fafafa", "#f4f4f5", "#ececee", "#e4e4e7", "#18181b", "#52525b", "#18181b", "#2563eb", "#ffffff"] },
+  { id: "citron", name: "Citron", note: "Vert citron et jaune", dark: ["#0a0a0a", "#111111", "#171717", "#262626", "#f3f3f4", "#a1a1aa", "#3cf08a", "#ffd60a", "#0a0a0a"], light: ["#ffffff", "#fafafa", "#f4f4f5", "#e5e5e5", "#111111", "#52525b", "#0f9d4a", "#b88a00", "#ffffff"] },
+  { id: "sunset", name: "Sunset", note: "Rose corail et orange", dark: ["#0a0a0a", "#111111", "#171717", "#262626", "#f3f3f4", "#a1a1aa", "#ff4f7b", "#ff8c2a", "#0a0a0a"], light: ["#ffffff", "#fafafa", "#f4f4f5", "#e5e5e5", "#111111", "#52525b", "#e8174f", "#f06a0c", "#ffffff"] },
+  { id: "sable", name: "Sable", note: "Or et terre cuite", dark: ["#0a0a0a", "#111111", "#171717", "#262626", "#f3f3f4", "#a1a1aa", "#ffc35a", "#ff7a3d", "#0a0a0a"], light: ["#ffffff", "#fafafa", "#f4f4f5", "#e5e5e5", "#111111", "#52525b", "#b07a0e", "#c2501f", "#ffffff"] },
+  { id: "sakura", name: "Sakura", note: "Rose vif et lavande", dark: ["#0a0a0a", "#111111", "#171717", "#262626", "#f3f3f4", "#a1a1aa", "#ff7ac6", "#b48cff", "#0a0a0a"], light: ["#ffffff", "#fafafa", "#f4f4f5", "#e5e5e5", "#111111", "#52525b", "#e0178a", "#8b4dff", "#ffffff"] },
+  { id: "ocean", name: "Océan", note: "Bleu électrique et turquoise", dark: ["#050d16", "#0a1622", "#0f1e2e", "#18304a", "#e6f3ff", "#93b0c9", "#3ba7ff", "#2ef2c8", "#050d16"], light: ["#eaf3fa", "#e0edf7", "#d4e5f2", "#c2d8ea", "#08202f", "#3d5b73", "#0077d9", "#00a88a", "#ffffff"] },
+  { id: "neon", name: "Néon", note: "Cyan et magenta, nuit", dark: ["#070614", "#0e0c22", "#15122e", "#241f48", "#eef0ff", "#a5a8d6", "#22d3ee", "#e879f9", "#070614"], light: ["#f7f7ff", "#efeffd", "#e5e5fa", "#d6d6f2", "#16143a", "#4f4d82", "#0891b2", "#c026d3", "#ffffff"] }
+];
+const PK = ["bg", "surface", "raise", "line", "fg", "muted", "accent", "violet", "on-accent"];
+(() => {
+  const vars = (v, mode) => PK.map((k, i) => `--${k}:${v[i]}`).join(";") + `;color-scheme:${mode}`;
+  const css = PALETTES.filter(p => p.id !== "nuit").map(p => {
+    const sel = `:root[data-palette="${p.id}"]`;
+    return `${sel}{${vars(p.dark, "dark")}}@media (prefers-color-scheme: light){${sel}:not([data-theme="dark"]){${vars(p.light, "light")}}}${sel}[data-theme="light"]{${vars(p.light, "light")}}${sel}[data-theme="dark"]{${vars(p.dark, "dark")}}`;
+  }).join("\n");
+  const st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
+})();
+// d = titres, b = texte, n = chiffres ; ds / ns = mise à l'échelle des titres / chiffres pour garder la même taille visuelle
+const FONTS = [
+  { id: "chakra", name: "Chakra Petch", sub: "Barlow · JetBrains Mono", d: "Chakra Petch", b: "Barlow", n: "JetBrains Mono", q: ["Chakra+Petch:wght@500;600;700", "Barlow:wght@400;500;600", "JetBrains+Mono:wght@500;700"], ds: 1, ns: 1 },
+  { id: "rajdhani", name: "Rajdhani", sub: "Titillium Web", d: "Rajdhani", b: "Titillium Web", n: "Rajdhani", q: ["Rajdhani:wght@500;600;700", "Titillium+Web:wght@400;600"], ds: 1.12, ns: 1.12 },
+  { id: "orbitron", name: "Orbitron", sub: "Exo 2", d: "Orbitron", b: "Exo 2", n: "Orbitron", q: ["Orbitron:wght@500;600;700", "Exo+2:wght@400;500;600"], ds: .78, ns: .82 },
+  { id: "russo", name: "Russo One", sub: "Barlow", d: "Russo One", b: "Barlow", n: "Russo One", q: ["Russo+One", "Barlow:wght@400;500;600"], ds: .92, ns: .95 },
+  { id: "teko", name: "Teko", sub: "Saira", d: "Teko", b: "Saira", n: "Teko", q: ["Teko:wght@500;600;700", "Saira:wght@400;500;600"], ds: 1.4, ns: 1.35 },
+  { id: "bebas", name: "Bebas Neue", sub: "Manrope", d: "Bebas Neue", b: "Manrope", n: "Bebas Neue", q: ["Bebas+Neue", "Manrope:wght@400;500;600;700"], ds: 1.35, ns: 1.3 },
+  { id: "oxanium", name: "Oxanium", sub: "IBM Plex Sans", d: "Oxanium", b: "IBM Plex Sans", n: "Oxanium", q: ["Oxanium:wght@500;600;700", "IBM+Plex+Sans:wght@400;500;600"], ds: 1, ns: 1 },
+  { id: "unbounded", name: "Unbounded", sub: "DM Sans", d: "Unbounded", b: "DM Sans", n: "Unbounded", q: ["Unbounded:wght@500;600;700", "DM+Sans:wght@400;500;600"], ds: .78, ns: .82 },
+  { id: "pixel", name: "Press Start 2P", sub: "Space Mono", d: "Press Start 2P", b: "Space Mono", n: "Press Start 2P", q: ["Press+Start+2P", "Space+Mono:wght@400;700"], ds: .55, ns: .68 },
+  { id: "michroma", name: "Michroma", sub: "Titillium Web", d: "Michroma", b: "Titillium Web", n: "Michroma", q: ["Michroma", "Titillium+Web:wght@400;600"], ds: .68, ns: .76 }
+];
+const fontURL = qs => "https://fonts.googleapis.com/css2?" + qs.map(q => "family=" + q).join("&") + "&display=swap";
+function applyAppearance() {
+  const r = document.documentElement;
+  if (PREFS.theme === "system") delete r.dataset.theme; else r.dataset.theme = PREFS.theme;
+  if (PREFS.palette === "nuit") delete r.dataset.palette; else r.dataset.palette = PREFS.palette;
+  const f = FONTS.find(x => x.id === PREFS.font) || FONTS[0];
+  $("#fontlink").href = fontURL(f.q);
+  const st = r.style;
+  st.setProperty("--display", `"${f.d}",system-ui,sans-serif`);
+  st.setProperty("--body", `"${f.b}",system-ui,sans-serif`);
+  st.setProperty("--mono", `"${f.n}",ui-monospace,monospace`);
+  st.setProperty("--ds", f.ds); st.setProperty("--ns", f.ns);
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) setTimeout(() => meta.content = getComputedStyle(document.body).backgroundColor, 0);
+}
+function savePrefs() { store.set("prefs", PREFS); applyAppearance(); renderReglages(); }
+const isDarkNow = () => PREFS.theme === "dark" || (PREFS.theme === "system" && !matchMedia("(prefers-color-scheme: light)").matches);
+let previewFonts = false;
+function renderReglages() {
+  const el = $("#v-reglages"); if (!el) return;
+  if (!previewFonts) {   // charge toutes les polices une seule fois pour les aperçus
+    previewFonts = true;
+    const l = document.createElement("link"); l.rel = "stylesheet"; l.href = fontURL([...new Set(FONTS.flatMap(f => f.q))]); document.head.appendChild(l);
+  }
+  const dark = isDarkNow();
+  el.innerHTML = `<div class="row"><h2>Réglages</h2></div>
+  <div class="set">
+    <div><h3>Mode</h3><div class="seg">${[["system", "Système"], ["dark", "Sombre"], ["light", "Clair"]].map(([v, l]) => `<button data-pref="theme" data-val="${v}" aria-pressed="${PREFS.theme === v}">${l}</button>`).join("")}</div></div>
+    <div><h3>Thème</h3><div class="pals">${PALETTES.map(p => { const v = dark ? p.dark : p.light; return `<button class="pal" data-pref="palette" data-val="${p.id}" aria-pressed="${PREFS.palette === p.id}" style="--pbg:${v[1]};--pfg:${v[4]}">
+      <span class="sw"><i style="background:${v[6]}"></i><i style="background:${v[7]}"></i><i style="background:${v[2]};border:1px solid ${v[3]}"></i></span>
+      <span><b>${esc(p.name)}</b><small>${esc(p.note)}</small></span></button>`; }).join("")}</div></div>
+    <div><h3>Police</h3><div class="fonts">${FONTS.map(f => `<button class="fnt" data-pref="font" data-val="${f.id}" aria-pressed="${PREFS.font === f.id}">
+      <span class="fd" style="font-family:'${f.d}',sans-serif;font-size:${Math.round(26 * f.ds)}px">Grand Theft Auto VI</span>
+      <span class="fn" style="font-family:'${f.n}',monospace;font-size:${Math.round(18 * f.ns)}px">22 j 10:41:07</span>
+      <span class="fb" style="font-family:'${f.b}',sans-serif">${esc(f.name)} · ${esc(f.sub)}</span></button>`).join("")}</div></div>
+  </div>`;
+}
+matchMedia("(prefers-color-scheme: light)").addEventListener("change", () => { applyAppearance(); if (!$("#v-reglages").hidden) renderReglages(); });
+applyAppearance();
+
 async function api(path, opts) {
   const r = await fetch(path, opts);
   const j = await r.json().catch(() => ({}));
@@ -385,6 +461,7 @@ function toggleFollow(id) {
 }
 document.addEventListener("click", e => {
   const t = e.target;
+  const pref = t.closest("[data-pref]"); if (pref) { PREFS[pref.dataset.pref] = pref.dataset.val; savePrefs(); return; }
   const star = t.closest("[data-star]"); if (star) { e.stopPropagation(); toggleFollow(star.dataset.star); return; }
   const o = t.closest("[data-open]"); if (o) { $("#results").hidden = true; $("#q").value = ""; openGame(o.dataset.open); return; }
   const p = t.closest("[data-plat]"); if (p) { S.plat = p.dataset.plat; S.onlyFollow = false; renderSorties(); return; }
@@ -409,7 +486,7 @@ document.addEventListener("keydown", e => {
 });
 
 /* ---------- onglets ---------- */
-const VIEWS = ["sorties", "maj", "actus", "amis", "comptes"];
+const VIEWS = ["sorties", "maj", "actus", "amis", "comptes", "reglages"];
 const loaded = {};
 function route() {
   const v = VIEWS.includes(location.hash.slice(1)) ? location.hash.slice(1) : "sorties";
@@ -418,6 +495,7 @@ function route() {
   if (v === "maj" && !loaded.maj) { loaded.maj = 1; renderMaj(); loadUpdates(); }
   if (v === "actus" && !loaded.actus) { loaded.actus = 1; renderActus(); loadNews(); }
   if (v === "comptes") renderComptes();
+  if (v === "reglages") renderReglages();
   if (v === "amis") renderAmis();
   closeDrawer();
 }

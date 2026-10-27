@@ -1,4 +1,4 @@
-# Lobby — by WTS
+# WTS Lobby
 
 Toutes les sorties de jeux avec compte à rebours, la recherche de n'importe quel jeu, les notes de mise à jour, l'actu jeux vidéo et les amis connectés (Steam, Xbox, FiveM), au même endroit. S'installe sur PC et téléphone comme une appli.
 
@@ -16,7 +16,7 @@ Aucune base de données nécessaire : les réponses sont gardées en cache par V
 
 ## Mise en ligne (une seule fois)
 1. **GitHub** : le code est dans `github.com/Wts-scripts/lobby`.
-2. **Vercel** : Add New → Project → importe `lobby` → Framework Preset : **Other** → Deploy.
+2. **Vercel** : Add New → Project → importe `lobby` → nom du projet `wts-lobby` (adresse https://wts-lobby.vercel.app) → Framework Preset : **Other** → Deploy.
    L'appli marche déjà en **mode démo** (calendrier fixe, sans jaquettes) tant que les clés ci-dessous manquent.
 
 3. **Sorties et recherche (IGDB, gratuit)** :
@@ -35,6 +35,12 @@ Aucune base de données nécessaire : les réponses sont gardées en cache par V
 
 ### Facultatif
 - `NEWS_FEEDS` : pour choisir les sites d'actus. Format : `Nom|adresse du flux RSS`, séparés par des virgules. Exemple : `Jeuxvideo.com|https://www.jeuxvideo.com/rss/rss.xml, Steam|https://store.steampowered.com/feeds/news.xml`. Un flux qui ne répond pas est simplement ignoré (il apparaît en note dans l'onglet Actualités).
+
+## Apparence (onglet Réglages)
+- **Mode** : Système (suit le PC ou le téléphone), Sombre ou Clair.
+- **Thème** : Nuit (par défaut), WTS, Graphite, Citron, Sunset, Sable, Sakura, Océan, Néon — les mêmes que Cura, chacun en sombre et en clair.
+- **Police** : 10 associations titres + texte + chiffres (Chakra Petch par défaut). Les tailles sont ajustées pour que chaque police garde le même encombrement.
+Ces choix restent sur l'appareil.
 
 ## Pour chaque personne (onglet Comptes)
 - **Steam** : coller l'adresse de son profil. La liste d'amis doit être publique (Profil → Modifier → Confidentialité).
