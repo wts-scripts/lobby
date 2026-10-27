@@ -63,6 +63,10 @@ Aucune base de données nécessaire : les réponses sont gardées en cache par V
 ## Live
 - Les joueurs qui ont mis leur Twitch dans leur profil public. Ceux en direct passent devant, le plus regardé est mis **à la une** (miniature du stream, titre, jeu, spectateurs, depuis quand).
 - Un clic ouvre le stream **dans l'appli**, avec le chat Twitch en option.
+- **Fenêtre de chat** à côté du live (côte à côte sur grand écran), avec deux onglets :
+  - **Chat Lobby** : un salon par live, entre joueurs Lobby (pseudo du profil public, ou un pseudo choisi). 200 derniers messages gardés 2 jours, 1 message par seconde et demie maximum, l'admin peut retirer un message (×). Une lecture de la base toutes les 2 s par live, quel que soit le nombre de spectateurs.
+  - **Chat Twitch** : le vrai chat du streamer. Bouton « Se connecter avec Twitch » : les messages tapés dans Lobby partent dans son chat Twitch, au nom de la personne. Le jeton Twitch reste sur l'appareil.
+  - **À faire une fois** : dans la console Twitch (dev.twitch.tv/console → ton appli Lobby → Gérer), ajoute l'URL de redirection OAuth `https://wts-lobby.vercel.app/twitch.html` (garde `http://localhost`), puis Enregistrer.
 - Les chaînes hors ligne restent listées, et les profils YouTube / Kick ont leurs liens.
 - Le compteur rouge dans le menu indique combien de joueurs sont en direct. Actualisation chaque minute.
 - Utilise les mêmes clés `TWITCH_CLIENT_ID` / `TWITCH_CLIENT_SECRET` qu'IGDB, et la base Upstash des profils.

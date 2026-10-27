@@ -6,11 +6,12 @@ const IDS = new Set(["sorties", "maj", "actus", "live", "meta", "pc", "amis", "c
 const clean = s => String(s || "").replace(/[<>\u0000-\u001f]/g, "").trim().slice(0, 24);
 
 module.exports = async (req, res) => {
-  if (!hasDB()) return send(res, req.method === "GET" ? 200 : 503, req.method === "GET" ? { menu: null } : { error: "Ajoute d'abord la base Upstash au projet Vercel." });
+  const pub = { twitchClientId: process.env.TWITCH_CLIENT_ID || null };   // identifiant public (pas le secret), pour « Se connecter avec Twitch »
+  if (!hasDB()) return send(res, req.method === "GET" ? 200 : 503, req.method === "GET" ? Object.assign({ menu: null }, pub) : { error: "Ajoute d'abord la base Upstash au projet Vercel." });
   try {
     if (req.method === "GET") {
       const m = await redis("GET", "cfg:menu");
-      return send(res, 200, { menu: m ? JSON.parse(m) : null }, 60);
+      return send(res, 200, Object.assign({ menu: m ? JSON.parse(m) : null }, pub), 60);
     }
     if (req.method !== "POST") return send(res, 405, { error: "Méthode non prise en charge." });
     if (!isAdmin(req)) return send(res, 403, { error: "Code admin manquant ou incorrect." });
