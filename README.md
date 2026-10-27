@@ -39,7 +39,7 @@ Aucune base de données nécessaire : les réponses sont gardées en cache par V
 ## Apparence (onglet Réglages)
 - **Mode** : Système (suit le PC ou le téléphone), Sombre ou Clair.
 - **Thème** : Nuit (par défaut), WTS, Graphite, Citron, Sunset, Sable, Sakura, Océan, Néon — les mêmes que Cura, chacun en sombre et en clair.
-- **Police** : 10 associations titres + texte + chiffres (Chakra Petch par défaut). Les tailles sont ajustées pour que chaque police garde le même encombrement.
+- **Police** : 20 associations titres + texte + chiffres, en deux séries (tech et futuriste, gras et impactant) — Chakra Petch par défaut. Les tailles sont ajustées pour que chaque police garde le même encombrement.
 Ces choix restent sur l'appareil.
 
 ## Pour chaque personne (onglet Comptes)

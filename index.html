@@ -34,6 +34,7 @@ try{var P=JSON.parse(localStorage.getItem("lobby.prefs")||"{}"),r=document.docum
   --bg:#f6f4fb; --surface:#fff; --raise:#eeeaf8; --line:#dcd6ec; --fg:#1c1830; --muted:#615a7d; --accent:#d9620a; --violet:#6a4ce0; --on-accent:#fff;
   --online:#14975e; --ingame:#6a4ce0; --away:#b7860e; --off:#9a94b3; --danger:#c62828; color-scheme:light}
 *{box-sizing:border-box}
+html{font-synthesis-weight:none}
 html{padding-top:env(safe-area-inset-top,0px)}
 body{background:var(--bg);color:var(--fg);font:16px/1.5 var(--body);margin:0}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}

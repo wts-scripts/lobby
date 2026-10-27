@@ -58,7 +58,18 @@ const FONTS = [
   { id: "oxanium", name: "Oxanium", sub: "IBM Plex Sans", d: "Oxanium", b: "IBM Plex Sans", n: "Oxanium", q: ["Oxanium:wght@500;600;700", "IBM+Plex+Sans:wght@400;500;600"], ds: 1, ns: 1 },
   { id: "unbounded", name: "Unbounded", sub: "DM Sans", d: "Unbounded", b: "DM Sans", n: "Unbounded", q: ["Unbounded:wght@500;600;700", "DM+Sans:wght@400;500;600"], ds: .78, ns: .82 },
   { id: "pixel", name: "Press Start 2P", sub: "Space Mono", d: "Press Start 2P", b: "Space Mono", n: "Press Start 2P", q: ["Press+Start+2P", "Space+Mono:wght@400;700"], ds: .55, ns: .68 },
-  { id: "michroma", name: "Michroma", sub: "Titillium Web", d: "Michroma", b: "Titillium Web", n: "Michroma", q: ["Michroma", "Titillium+Web:wght@400;600"], ds: .68, ns: .76 }
+  { id: "michroma", name: "Michroma", sub: "Titillium Web", d: "Michroma", b: "Titillium Web", n: "Michroma", q: ["Michroma", "Titillium+Web:wght@400;600"], ds: .68, ns: .76 },
+  // série « gras et impactant »
+  { id: "anton", name: "Anton", sub: "Archivo", d: "Anton", b: "Archivo", n: "Anton", q: ["Anton", "Archivo:wght@400;500;600;800"], ds: 1.25, ns: 1.15 },
+  { id: "archivoblack", name: "Archivo Black", sub: "Archivo", d: "Archivo Black", b: "Archivo", n: "Archivo Black", q: ["Archivo+Black", "Archivo:wght@400;500;600;800"], ds: .88, ns: .9 },
+  { id: "bungee", name: "Bungee", sub: "Barlow", d: "Bungee", b: "Barlow", n: "Bungee", q: ["Bungee", "Barlow:wght@400;500;600"], ds: .8, ns: .85 },
+  { id: "dela", name: "Dela Gothic One", sub: "Manrope", d: "Dela Gothic One", b: "Manrope", n: "Dela Gothic One", q: ["Dela+Gothic+One", "Manrope:wght@400;500;600;700"], ds: .86, ns: .9 },
+  { id: "bigshoulders", name: "Big Shoulders Display", sub: "Barlow", d: "Big Shoulders Display", b: "Barlow", n: "Big Shoulders Display", q: ["Big+Shoulders+Display:wght@700;800;900", "Barlow:wght@400;500;600"], ds: 1.4, ns: 1.35 },
+  { id: "bowlby", name: "Bowlby One SC", sub: "Rubik", d: "Bowlby One SC", b: "Rubik", n: "Bowlby One SC", q: ["Bowlby+One+SC", "Rubik:wght@400;500;600;700"], ds: .86, ns: .9 },
+  { id: "rubikmono", name: "Rubik Mono One", sub: "Rubik", d: "Rubik Mono One", b: "Rubik", n: "Rubik Mono One", q: ["Rubik+Mono+One", "Rubik:wght@400;500;600;700"], ds: .68, ns: .78 },
+  { id: "staatliches", name: "Staatliches", sub: "Work Sans", d: "Staatliches", b: "Work Sans", n: "Staatliches", q: ["Staatliches", "Work+Sans:wght@400;500;600;700"], ds: 1.3, ns: 1.25 },
+  { id: "titan", name: "Titan One", sub: "Nunito", d: "Titan One", b: "Nunito", n: "Titan One", q: ["Titan+One", "Nunito:wght@400;600;700;800"], ds: .95, ns: .97 },
+  { id: "passion", name: "Passion One", sub: "Archivo", d: "Passion One", b: "Archivo", n: "Passion One", q: ["Passion+One:wght@400;700;900", "Archivo:wght@400;500;600;800"], ds: 1.25, ns: 1.25 }
 ];
 const fontURL = qs => "https://fonts.googleapis.com/css2?" + qs.map(q => "family=" + q).join("&") + "&display=swap";
 function applyAppearance() {
