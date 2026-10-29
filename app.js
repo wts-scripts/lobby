@@ -415,96 +415,6 @@ function renderActus() {
           <div><span class="meta">${esc(n.src)} · ${ago(n.d)}</span><h4>${esc(n.t)}</h4>${n.txt ? `<p>${esc(n.txt)}</p>` : ""}</div></a>`).join("")}</div>`}`;
 }
 
-/* ---------- Amis ---------- */
-const PLAT = { steam: "Steam", xbox: "Xbox", psn: "PlayStation", discord: "Discord", fivem: "FiveM", bnet: "Battle.net", ea: "EA app", epic: "Epic", riot: "Riot", ubi: "Ubisoft", nin: "Nintendo" };
-const ST = { ingame: ["En jeu", "var(--ingame)"], online: ["En ligne", "var(--online)"], away: ["Absent", "var(--away)"], offline: ["Hors ligne", "var(--off)"] };
-const ORDER = ["ingame", "online", "away", "offline"];
-const hasAccounts = () => !!(S.acc.steam || S.acc.xbox || S.acc.fivemServers);
-let fBusy = false;
-async function loadFriends() {
-  if (!hasAccounts() || fBusy) { renderAmis(); return; }
-  fBusy = true;
-  const list = s => s.split(/[,\n]/).map(x => x.trim()).filter(Boolean);
-  try {
-    const j = await api("/api/friends", { method: "POST", headers: { "content-type": "application/json" },
-      body: JSON.stringify({ steam: S.acc.steam || undefined, xbox: S.acc.xbox || undefined,
-        fivem: S.acc.fivemServers ? { servers: list(S.acc.fivemServers), names: list(S.acc.fivemNames) } : undefined }) });
-    track(j.friends || []); S.friends = j.friends || []; S.friendErr = j.errors || []; S.friendsAt = Date.now();
-  } catch (e) { S.friendErr = [{ pl: "", error: e.message }]; S.friends = S.friends || []; }
-  fBusy = false; renderAmis();
-}
-// « depuis quand » : Lobby note l'heure où il voit un changement de statut ou de jeu
-function track(list) {
-  const now = Date.now(), next = {};
-  for (const f of list) {
-    const sig = f.s === "offline" ? "off" : f.s + "|" + f.g;
-    const p = S.seen[f.key];
-    next[f.key] = p && p.sig === sig ? p : { sig, since: now, exact: !!p };
-  }
-  S.seen = next; store.set("seen", next);
-}
-function renderAmis() {
-  const el = $("#v-amis");
-  const online = (S.friends || []).filter(f => f.s !== "offline").length;
-  const oc = $("#onlineCount"); if (oc) { oc.hidden = !S.friends; oc.textContent = online; }
-  if (!hasAccounts()) {
-    el.innerHTML = `<div class="row"><h2>Amis</h2></div><div class="empty">Lie tes comptes Steam, Xbox ou ton serveur FiveM pour voir qui joue en ce moment.<br><br><a class="btn primary" href="#comptes">Lier mes comptes</a></div>`;
-    return;
-  }
-  if (!S.friends) { el.innerHTML = `<div class="row"><h2>Amis</h2></div><div class="empty">Recherche de tes amis…</div>`; return; }
-  const plats = [...new Set(S.friends.map(f => f.pl))];
-  const fs = S.friends.filter(f => S.friendPlat === "all" || f.pl === S.friendPlat)
-    .sort((a, b) => ORDER.indexOf(a.s) - ORDER.indexOf(b.s) || (S.seen[a.key]?.since || 0) - (S.seen[b.key]?.since || 0) || a.n.localeCompare(b.n));
-  const c = k => S.friends.filter(f => f.s === k).length;
-  el.innerHTML = `<div class="row"><h2>Amis</h2>
-      <div class="sum">${ORDER.map(k => `<span><span class="dot" style="background:${ST[k][1]}"></span><b>${c(k)}</b>${ST[k][0]}</span>`).join("")}</div></div>
-    ${S.friendErr.map(e => `<p class="err">${e.pl ? esc(PLAT[e.pl]) + " : " : ""}${esc(e.error)}</p>`).join("")}
-    ${plats.length > 1 ? `<div class="chips" style="margin-bottom:16px">${["all", ...plats].map(k => `<button class="chip" data-fplat="${k}" aria-pressed="${S.friendPlat === k}">${k === "all" ? "Toutes" : PLAT[k]}</button>`).join("")}</div>` : ""}
-    <div class="friends">${fs.map(friendCard).join("") || `<div class="empty">Aucun ami trouvé${S.friendPlat !== "all" ? " sur cette plateforme" : ""}.</div>`}</div>
-    <p class="meta" style="margin-top:16px">Actualisé ${ago(S.friendsAt)} · toutes les minutes tant que Lobby est ouvert. « ≥ » : Lobby l'a vu connecté au moins depuis ce temps-là.</p>`;
-}
-function friendCard(f) {
-  const on = f.s !== "offline", sn = S.seen[f.key];
-  let since;
-  if (on) since = sn ? `depuis<b>${sn.exact ? "" : "≥ "}${dur(Date.now() - sn.since)}</b>` : "";
-  else since = f.last ? `vu<b>${ago(f.last)}</b>` : `<b>Hors ligne</b>`;
-  return `<div class="friend" style="--st:${ST[f.s][1]}">
-    <div class="avatar"><img src="${esc(f.avatar || art(f.n, "avatar", 96, 96))}" alt="" data-k="${esc(f.n)}" data-kind="avatar" data-w="96" data-h="96" loading="lazy"></div>
-    <div class="info"><div class="n">${esc(f.n)}<span class="plat">${esc(PLAT[f.pl])}</span></div><div class="g">${esc(f.s === "ingame" ? f.g : f.g || ST[f.s][0])}</div></div>
-    <div class="since">${since}</div></div>`;
-}
-
-/* ---------- Comptes ---------- */
-function renderComptes() {
-  const a = S.acc;
-  const soon = [["psn", "Présence des amis PlayStation : en préparation."], ["discord", "Statut et jeu en cours via un bot Lobby : en préparation. Discord affiche aussi les jeux Battle.net, EA, Epic…"]];
-  const none = ["bnet", "ea", "epic", "riot", "ubi", "nin"];
-  ($("#acc-links") || $("#v-comptes")).innerHTML = `<h3 class="subh">Amis en ligne</h3>
-    <p style="color:var(--muted);margin:0 0 16px;max-width:65ch">Pour voir qui joue dans l'onglet Amis. Ces identifiants restent sur cet appareil. Lobby les envoie seulement pour demander qui est connecté, rien n'est enregistré sur le serveur.</p>
-    <form class="accounts" id="accForm">
-      <div class="acc"><h4>Steam<span class="lvl ok">Officiel</span></h4>
-        <p>Colle l'adresse de ton profil Steam. Ta liste d'amis doit être publique (Steam → Profil → Modifier → Confidentialité).</p>
-        <div class="field"><label for="f-steam">Profil Steam</label><input id="f-steam" name="steam" placeholder="https://steamcommunity.com/id/ton-pseudo" value="${esc(a.steam)}"></div></div>
-      <div class="acc"><h4>Xbox<span class="lvl mid">Via OpenXBL</span></h4>
-        <p>Connecte-toi sur <a href="https://xbl.io" target="_blank" rel="noopener">xbl.io</a> avec ton compte Xbox (gratuit), copie ta clé API personnelle et colle-la ici.</p>
-        <div class="field"><label for="f-xbox">Clé OpenXBL</label><input id="f-xbox" name="xbox" type="password" autocomplete="off" placeholder="Ta clé xbl.io" value="${esc(a.xbox)}"></div></div>
-      <div class="acc"><h4>FiveM<span class="lvl ok">Public</span></h4>
-        <p>Code du serveur (la fin de cfx.re/join/…) et pseudos de tes amis. Lobby les repère dans la liste des joueurs connectés.</p>
-        <div class="field"><label for="f-fs">Serveurs</label><input id="f-fs" name="fivemServers" placeholder="abc123, xyz789" value="${esc(a.fivemServers)}"></div>
-        <div class="field"><label for="f-fn">Pseudos de tes amis</label><input id="f-fn" name="fivemNames" placeholder="Kenzo, Lina" value="${esc(a.fivemNames)}"></div></div>
-      ${soon.map(([k, t]) => `<div class="acc"><h4>${PLAT[k]}<span class="lvl mid">Bientôt</span></h4><p>${t}</p></div>`).join("")}
-      <div class="acc"><h4>Autres plateformes<span class="lvl no">Pas d'API</span></h4><p>${none.map(k => PLAT[k]).join(", ")} ne donnent pas accès au statut des amis. Ils apparaîtront via Discord.</p></div>
-      <div style="grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" type="submit">Enregistrer</button>${hasAccounts() ? `<button class="btn" type="button" data-act="forget">Tout délier</button>` : ""}</div>
-    </form>`;
-}
-document.addEventListener("submit", e => {
-  if (e.target.id !== "accForm") return; e.preventDefault();
-  const f = new FormData(e.target);
-  S.acc = { steam: f.get("steam").trim(), xbox: f.get("xbox").trim(), fivemServers: f.get("fivemServers").trim(), fivemNames: f.get("fivemNames").trim() };
-  store.set("accounts", S.acc); S.friends = null; S.friendErr = [];
-  toast("Comptes enregistrés"); renderComptes(); location.hash = "#amis"; loadFriends();
-});
-
 /* ---------- événements ---------- */
 let toastT;
 function toast(m) { const t = $("#toast"); t.textContent = m; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, 2400); }
@@ -525,7 +435,6 @@ document.addEventListener("click", e => {
   const star = t.closest("[data-star]"); if (star) { e.stopPropagation(); toggleFollow(star.dataset.star); return; }
   const o = t.closest("[data-open]"); if (o) { $("#results").hidden = true; $("#q").value = ""; openGame(o.dataset.open); return; }
   const p = t.closest("[data-plat]"); if (p) { S.plat = p.dataset.plat; S.onlyFollow = false; renderSorties(); return; }
-  const fp = t.closest("[data-fplat]"); if (fp) { S.friendPlat = fp.dataset.fplat; renderAmis(); return; }
   const add = t.closest("[data-addapp]");
   if (add) { const id = +add.dataset.addapp; if (!S.apps.some(a => a.appid === id)) { S.apps.push({ appid: id, name: add.dataset.name }); store.set("apps", S.apps); toast(add.dataset.name + " ajouté"); } S.updates = null; renderMaj(); loadUpdates(); return; }
   const un = t.closest("[data-unapp]");
@@ -533,9 +442,9 @@ document.addEventListener("click", e => {
   const act = t.closest("[data-act]")?.dataset.act;
   if (act === "only-follow") { S.onlyFollow = !S.onlyFollow; renderSorties(); }
   else if (act === "close") closeDrawer();
-  else if (act === "reload-games") { S.gamesErr = ""; S.games = []; renderSorties(); loadGames(); }
+  else if (act === "reload-games") { S.gamesErr = ""; S.games = []; ["accounts", "seen", "myProfile", "accSub", "twitchAuth", "chatTab", "liveReopen"].forEach(k => { try { localStorage.removeItem("lobby." + k); } catch {} });
+renderSorties(); loadGames(); }
   else if (act === "reload-news") { S.news = null; renderActus(); loadNews(); }
-  else if (act === "forget") { S.acc = { steam: "", xbox: "", fivemServers: "", fivemNames: "" }; store.set("accounts", S.acc); S.friends = null; S.seen = {}; store.set("seen", {}); renderComptes(); renderAmis(); toast("Comptes déliés"); }
   if (t.id === "scrim") closeDrawer();
   if (!t.closest(".search")) $("#results").hidden = true;
   if (!t.closest(".addapp") && $("#appres")) $("#appres").hidden = true;
@@ -548,7 +457,7 @@ document.addEventListener("keydown", e => {
 });
 
 /* ---------- onglets ---------- */
-const VIEWS = ["sorties", "maj", "actus", "live", "meta", "pc", "amis", "comptes", "reglages"];
+const VIEWS = ["sorties", "maj", "actus", "meta", "pc", "reglages"];
 const loaded = {};
 function route() {
   const v = VIEWS.includes(location.hash.slice(1)) ? location.hash.slice(1) : "sorties";
@@ -556,13 +465,10 @@ function route() {
   document.querySelectorAll("#tabs a").forEach(a => a.hash === "#" + v ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"));
   if (v === "maj" && !loaded.maj) { loaded.maj = 1; renderMaj(); loadUpdates(); }
   if (v === "actus" && !loaded.actus) { loaded.actus = 1; renderActus(); loadNews(); }
-  if (v === "comptes") renderComptes();
   if (v === "reglages") renderReglages();
   if (v === "meta" && window.renderMetaTab) window.renderMetaTab();
   if (v === "pc" && window.renderPC) window.renderPC();
-  if (v === "live" && window.renderLive) window.renderLive();
   if (window.onRoute) window.onRoute(v);
-  if (v === "amis") renderAmis();
   closeDrawer();
 }
 window.addEventListener("hashchange", route);
@@ -574,8 +480,6 @@ function tick() {
   document.querySelectorAll("[data-cd]").forEach(c => { const g = gameById(c.dataset.cd); if (!g) return; const [t, s] = short(g); c.textContent = t; c.classList.toggle("soon", s); });
 }
 setInterval(() => { if (!document.hidden) tick(); }, 1000);
-setInterval(() => { if (!document.hidden && hasAccounts()) loadFriends(); }, 60000);
-document.addEventListener("visibilitychange", () => { if (!document.hidden && hasAccounts() && Date.now() - S.friendsAt > 55000) loadFriends(); });
 
 /* ---------- installation ---------- */
 let installEvt;
@@ -584,5 +488,6 @@ $("#install").addEventListener("click", async () => { if (!installEvt) return; i
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => {});
 
 // premier affichage une fois tous les scripts chargés (Meta, Config PC)
-renderSorties(); loadGames(); loadFriends();
+["accounts", "seen", "myProfile", "accSub", "twitchAuth", "chatTab", "liveReopen"].forEach(k => { try { localStorage.removeItem("lobby." + k); } catch {} });
+renderSorties(); loadGames();
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", route); else setTimeout(route, 0);

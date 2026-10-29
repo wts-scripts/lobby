@@ -2,11 +2,11 @@
 //   GET  /api/config            → { menu }
 //   POST /api/config { menu }   → admin seulement (en-tête x-lobby-key)
 const { send, body, redis, hasDB, isAdmin } = require("./_lib");
-const IDS = new Set(["sorties", "maj", "actus", "live", "meta", "pc", "amis", "comptes", "reglages"]);
+const IDS = new Set(["sorties", "maj", "actus", "meta", "pc", "reglages"]);
 const clean = s => String(s || "").replace(/[<>\u0000-\u001f]/g, "").trim().slice(0, 24);
 
 module.exports = async (req, res) => {
-  const pub = { twitchClientId: process.env.TWITCH_CLIENT_ID || null };   // identifiant public (pas le secret), pour « Se connecter avec Twitch »
+  const pub = {};
   if (!hasDB()) return send(res, req.method === "GET" ? 200 : 503, req.method === "GET" ? Object.assign({ menu: null }, pub) : { error: "Ajoute d'abord la base Upstash au projet Vercel." });
   try {
     if (req.method === "GET") {

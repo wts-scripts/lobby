@@ -2,8 +2,8 @@
 "use strict";
 (() => {
   const TABS = [
-    ["sorties", "Sorties"], ["maj", "Mises à jour"], ["actus", "Actualités"], ["live", "Live", '<span class="count live" id="liveCount" hidden></span>'],
-    ["meta", "Meta"], ["pc", "Config PC"], ["amis", "Amis", '<span class="count" id="onlineCount" hidden></span>'], ["comptes", "Comptes"], ["reglages", "Réglages"]
+    ["sorties", "Sorties"], ["maj", "Mises à jour"], ["actus", "Actualités"],
+    ["meta", "Meta"], ["pc", "Config PC"], ["reglages", "Réglages"]
   ];
   const T = Object.fromEntries(TABS.map(([id, label, extra]) => [id, { label, extra: extra || "" }]));
   const DEFAULT = TABS.map(([id]) => ({ t: "tab", id }));
@@ -36,8 +36,6 @@
     const v = location.hash.slice(1);
     nav.querySelectorAll("a").forEach(a => a.hash === "#" + v ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"));
     if (!nav.querySelector("[aria-current]")) { const first = nav.querySelector('a[href="#sorties"]'); if (first && !VIEWS.includes(v)) first.setAttribute("aria-current", "page"); }
-    const oc = $("#onlineCount"); if (oc && S.friends) { oc.hidden = false; oc.textContent = S.friends.filter(f => f.s !== "offline").length; }
-    const lc = $("#liveCount"); if (lc && window.LIVE_NOW && window.LIVE_NOW.length) { lc.hidden = false; lc.textContent = window.LIVE_NOW.length; }
   }
 
   /* ---------- éditeur dans Réglages ---------- */
