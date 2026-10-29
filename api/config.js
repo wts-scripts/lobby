@@ -2,7 +2,7 @@
 //   GET  /api/config            → { menu }
 //   POST /api/config { menu }   → admin seulement (en-tête x-lobby-key)
 const { send, body, redis, hasDB, isAdmin } = require("./_lib");
-const IDS = new Set(["sorties", "maj", "actus", "meta", "pc", "reglages"]);
+const IDS = new Set(["sorties", "evenements", "maj", "actus", "tendances", "esport", "gratuits", "abonnements", "meta", "pc", "reglages"]);
 const clean = s => String(s || "").replace(/[<>\u0000-\u001f]/g, "").trim().slice(0, 24);
 
 module.exports = async (req, res) => {

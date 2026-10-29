@@ -58,8 +58,9 @@ header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var
 .results small{color:var(--muted);font-family:var(--mono);font-size:12px;white-space:nowrap}
 .results .msg{padding:12px;color:var(--muted)}
 .install{margin-left:auto}
-nav{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
-nav a{font:600 calc(14px*var(--ds)) var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:10px 14px;border-bottom:3px solid transparent;white-space:nowrap}
+nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+@media (min-width:900px){nav{flex-wrap:wrap;overflow:visible;row-gap:0}}
+nav a{font:600 calc(14px*var(--ds)) var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:10px 11px;border-bottom:3px solid transparent;white-space:nowrap}
 nav a[aria-current="page"]{color:var(--fg);border-color:var(--accent)}
 nav a:focus-visible{outline:2px solid var(--accent)}
 nav .count{font-family:var(--mono);font-size:11px;background:var(--raise);border-radius:99px;padding:1px 7px;margin-left:6px;color:var(--online)}
@@ -321,6 +322,93 @@ h2{font:700 calc(24px*var(--ds))/1.2 var(--display);letter-spacing:.03em;text-tr
 .mvis{display:flex;gap:6px;align-items:center;font-size:14px;white-space:nowrap}
 .mvis input{width:18px;height:18px;accent-color:var(--accent)}
 @media (max-width:480px){.grip{display:none}.mrow{grid-template-columns:auto minmax(0,1fr) auto}.mrow.sep{grid-template-columns:auto auto minmax(0,1fr) auto}}
+/* Rubriques d'info */
+.livetag{display:inline-block;background:#e91916;color:#fff;font:700 11px var(--mono);letter-spacing:.08em;padding:3px 7px;border-radius:5px;vertical-align:middle}
+.subh{font:700 calc(16px*var(--ds)) var(--display);letter-spacing:.06em;text-transform:uppercase;margin:24px 0 12px;display:flex;align-items:center}
+.big{padding:12px 18px;font-size:16px;justify-content:center}
+/* Événements */
+.evhero{min-height:240px}
+.evbig{font:700 calc(40px*var(--ns)) var(--mono)}
+.evbig .evcd,.evbig .evnow{color:#fff}
+.evlist{display:grid;gap:10px}
+.evcard{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:16px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.evdate{display:grid;text-align:center;background:var(--raise);border-radius:10px;padding:8px 0}
+.evdate b{font:700 calc(26px*var(--ns))/1 var(--mono)}
+.evdate span{font:600 12px var(--mono);text-transform:uppercase;color:var(--muted)}
+.evbody{display:grid;gap:6px;min-width:0}
+.evbody h4{margin:0;font:700 calc(19px*var(--ds))/1.2 var(--display)}
+.evwhen{margin:0;font-weight:600}
+.evdesc{margin:0;color:var(--muted);font-size:14px}
+.evcd{font:700 calc(18px*var(--ns)) var(--mono);color:var(--accent);white-space:nowrap;font-variant-numeric:tabular-nums}
+.evnow{font:700 13px var(--mono);color:#fff;background:#e91916;border-radius:6px;padding:4px 8px;white-space:nowrap}
+.tag.ev-showcase{background:color-mix(in srgb,var(--violet) 22%,transparent);color:var(--violet)}
+.tag.ev-salon{background:color-mix(in srgb,var(--online) 20%,transparent);color:var(--online)}
+.tag.ev-ceremonie{background:color-mix(in srgb,var(--away) 22%,transparent);color:var(--away)}
+.tag.ev-soldes,.tag.ev-autre{background:color-mix(in srgb,var(--accent) 20%,transparent);color:var(--accent)}
+.tag.ev-esport{background:color-mix(in srgb,#e91916 18%,transparent);color:#e5484d}
+@media (max-width:560px){.evcard{grid-template-columns:52px minmax(0,1fr)}.evright{grid-column:2}}
+/* Jeux gratuits */
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.fcard{display:grid;align-content:start;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;color:var(--fg);font:inherit;cursor:pointer;padding:0;min-width:0}
+.fcard:hover{border-color:var(--violet)}
+.fcard:focus-visible{outline:2px solid var(--accent)}
+.fimg{position:relative;display:block;aspect-ratio:460/215;background:var(--raise)}
+.fimg img{width:100%;height:100%;object-fit:cover;display:block}
+.fstore{position:absolute;left:8px;top:8px;background:rgb(10 8 20/.75);color:#fff;font:600 12px var(--body);padding:3px 8px;border-radius:6px}
+.fbody{display:grid;gap:4px;padding:10px 12px 12px}
+.fbody b{font:600 calc(16px*var(--ds))/1.25 var(--display);overflow-wrap:anywhere}
+.fprice{display:flex;gap:8px;align-items:baseline}
+.fprice s{color:var(--muted);font-size:14px}
+.fprice em{font:700 14px var(--body);font-style:normal;color:var(--online);text-transform:uppercase;letter-spacing:.04em}
+.fend{font:600 13px var(--mono);color:var(--accent);font-variant-numeric:tabular-nums}
+.fbig{display:grid;gap:4px;background:var(--raise);border-radius:12px;padding:14px 16px}
+.fbig span{color:var(--muted);font-size:14px}
+.fbig b{font:700 calc(26px*var(--ns)) var(--mono);color:var(--accent);font-variant-numeric:tabular-nums}
+/* Tendances */
+.trank{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.trow{display:grid;grid-template-columns:36px 150px minmax(0,1fr) 96px 96px;gap:14px;align-items:center;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 14px 8px 10px;color:var(--fg);font:inherit;cursor:pointer}
+.trow:hover{border-color:var(--violet)}
+.trow:focus-visible{outline:2px solid var(--accent)}
+.tr{font:700 calc(20px*var(--ns)) var(--mono);color:var(--muted);text-align:center;font-variant-numeric:tabular-nums}
+.twide{width:150px;aspect-ratio:460/215;object-fit:cover;border-radius:6px;display:block;background:var(--raise)}
+.tn{display:grid;gap:2px;min-width:0}
+.tn b{font:600 calc(16px*var(--ds)) var(--display);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tv{display:grid;text-align:right}
+.tv b{font:700 calc(17px*var(--ns)) var(--mono);font-variant-numeric:tabular-nums}
+@media (max-width:640px){.trow{grid-template-columns:28px 90px minmax(0,1fr) auto;gap:10px}.twide{width:90px}.hide-s{display:none}}
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.tbox{position:relative;display:grid;gap:4px;min-width:0}
+.tbox img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:10px;background:var(--raise);display:block}
+.tbox .tr{position:absolute;left:8px;top:8px;background:rgb(10 8 20/.75);color:#fff;border-radius:6px;padding:2px 8px;font-size:14px}
+.tbox b{font:600 calc(15px*var(--ds)) var(--display);overflow-wrap:anywhere}
+.kvs{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.kvs div{display:grid;gap:2px;background:var(--raise);border-radius:10px;padding:12px}
+.kvs b{font:700 calc(22px*var(--ns)) var(--mono);font-variant-numeric:tabular-nums}
+.kvs span{color:var(--muted);font-size:13px}
+/* Esport */
+.mlistm{display:grid;gap:8px;margin-bottom:6px}
+.mrowm{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr) 130px;gap:14px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.mrowm.live{border-color:#e91916}
+.lg{display:flex;gap:10px;align-items:center;min-width:0}
+.lg img{width:32px;height:32px;object-fit:contain;flex:none}
+.lg>span{display:grid;min-width:0}
+.lg b{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lg .meta{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.duel{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:12px;align-items:center}
+.team{display:flex;gap:8px;align-items:center;min-width:0}
+.team.l{justify-content:flex-end;flex-direction:row-reverse}
+.team img{width:30px;height:30px;object-fit:contain;flex:none}
+.team i{width:30px;height:30px;border-radius:8px;background:var(--raise);display:grid;place-items:center;font:700 11px var(--mono);font-style:normal;flex:none}
+.team b{font:600 calc(15px*var(--ds)) var(--display);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.score{font:700 calc(22px*var(--ns)) var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.score i{font-style:normal;color:var(--muted);margin:0 4px}
+.vs{font:600 15px var(--mono);color:var(--muted);background:var(--raise);border-radius:6px;padding:4px 8px}
+.mend{text-align:right}
+@media (max-width:760px){.mrowm{grid-template-columns:1fr;gap:8px}.mend{text-align:left}}
+/* Abonnements */
+.tag.sv-gamepass{background:color-mix(in srgb,#107c10 22%,transparent);color:#3ccf5a}
+.tag.sv-psplus{background:color-mix(in srgb,#0070d1 22%,transparent);color:#4aa3ff}
+.tag.sv-ubisoft,.tag.sv-eaplay,.tag.sv-nso{background:color-mix(in srgb,var(--violet) 22%,transparent);color:var(--violet)}
 footer{color:var(--muted);font-size:13px;padding-block:24px;border-top:1px solid var(--line)}
 @media (prefers-reduced-motion:no-preference){.game,.btn,.chip,.ncard,.item{transition:border-color .15s,background .15s}}
 </style>
@@ -338,8 +426,13 @@ footer{color:var(--muted);font-size:13px;padding-block:24px;border-top:1px solid
   </div>
   <nav class="wrap" id="tabs">
     <a href="#sorties">Sorties</a>
-    <a href="#maj">Mises à jour</a>
+    <a href="#evenements">Événements</a>
     <a href="#actus">Actualités</a>
+    <a href="#maj">Mises à jour</a>
+    <a href="#tendances">Tendances</a>
+    <a href="#esport">Esport</a>
+    <a href="#gratuits">Jeux gratuits</a>
+    <a href="#abonnements">Abonnements</a>
     <a href="#meta">Meta</a>
     <a href="#pc">Config PC</a>
     <a href="#reglages">Réglages</a>
@@ -350,11 +443,16 @@ footer{color:var(--muted);font-size:13px;padding-block:24px;border-top:1px solid
   <section id="v-sorties"></section>
   <section id="v-maj" hidden></section>
   <section id="v-actus" hidden></section>
+  <section id="v-evenements" hidden></section>
+  <section id="v-tendances" hidden></section>
+  <section id="v-esport" hidden></section>
+  <section id="v-gratuits" hidden></section>
+  <section id="v-abonnements" hidden></section>
   <section id="v-meta" hidden></section>
   <section id="v-pc" hidden></section>
   <section id="v-reglages" hidden></section>
 </main>
-<footer class="wrap">Données de jeux : IGDB. Mises à jour : annonces Steam. Actus : flux RSS des sites cités. Bandes-annonces : YouTube.</footer>
+<footer class="wrap">Données de jeux : IGDB. Mises à jour et tendances : Steam. Jeux gratuits : Epic Games et GamerPower. Esport : PandaScore. Actus et abonnements : flux RSS des sites cités.</footer>
 
 <div class="scrim" id="scrim" hidden></div>
 <aside class="drawer" id="drawer" hidden role="dialog" aria-modal="true" aria-labelledby="dTitle"></aside>
@@ -364,5 +462,6 @@ footer{color:var(--muted);font-size:13px;padding-block:24px;border-top:1px solid
 <script src="/menu.js"></script>
 <script src="/meta.js"></script>
 <script src="/pc.js"></script>
+<script src="/infos.js"></script>
 </body>
 </html>

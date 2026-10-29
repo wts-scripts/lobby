@@ -457,7 +457,7 @@ document.addEventListener("keydown", e => {
 });
 
 /* ---------- onglets ---------- */
-const VIEWS = ["sorties", "maj", "actus", "meta", "pc", "reglages"];
+const VIEWS = ["sorties", "evenements", "maj", "actus", "tendances", "esport", "gratuits", "abonnements", "meta", "pc", "reglages"];
 const loaded = {};
 function route() {
   const v = VIEWS.includes(location.hash.slice(1)) ? location.hash.slice(1) : "sorties";
@@ -468,6 +468,7 @@ function route() {
   if (v === "reglages") renderReglages();
   if (v === "meta" && window.renderMetaTab) window.renderMetaTab();
   if (v === "pc" && window.renderPC) window.renderPC();
+  if (window["render_" + v]) window["render_" + v]();
   if (window.onRoute) window.onRoute(v);
   closeDrawer();
 }

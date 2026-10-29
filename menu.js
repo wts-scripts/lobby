@@ -2,11 +2,18 @@
 "use strict";
 (() => {
   const TABS = [
-    ["sorties", "Sorties"], ["maj", "Mises à jour"], ["actus", "Actualités"],
+    ["sorties", "Sorties"], ["evenements", "Événements"], ["maj", "Mises à jour"], ["actus", "Actualités"], ["tendances", "Tendances"], ["esport", "Esport"], ["gratuits", "Jeux gratuits"], ["abonnements", "Abonnements"],
     ["meta", "Meta"], ["pc", "Config PC"], ["reglages", "Réglages"]
   ];
   const T = Object.fromEntries(TABS.map(([id, label, extra]) => [id, { label, extra: extra || "" }]));
-  const DEFAULT = TABS.map(([id]) => ({ t: "tab", id }));
+  // menu d'origine : rubriques groupées par des séparateurs
+  const DEFAULT = [
+    { t: "tab", id: "sorties" }, { t: "tab", id: "evenements" },
+    { t: "sep", label: "Infos" }, { t: "tab", id: "actus" }, { t: "tab", id: "maj" }, { t: "tab", id: "tendances" }, { t: "tab", id: "esport" },
+    { t: "sep", label: "Gratuit" }, { t: "tab", id: "gratuits" }, { t: "tab", id: "abonnements" },
+    { t: "sep", label: "Outils" }, { t: "tab", id: "meta" }, { t: "tab", id: "pc" },
+    { t: "sep", label: "" }, { t: "tab", id: "reglages" }
+  ];
   const clean = s => String(s || "").replace(/[<>\u0000-\u001f]/g, "").trim().slice(0, 24);
 
   // remet une config en ordre : catégories connues, pas de doublon, les nouvelles ajoutées à la fin, Réglages toujours visible
