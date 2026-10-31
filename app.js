@@ -49,6 +49,7 @@ const PK = ["bg", "surface", "raise", "line", "fg", "muted", "accent", "violet",
 })();
 // d = titres, b = texte, n = chiffres ; ds / ns = mise à l'échelle des titres / chiffres pour garder la même taille visuelle
 const FONTS = [
+  { id: "michroma", name: "Michroma", sub: "Titillium Web", d: "Michroma", b: "Titillium Web", n: "Michroma", q: ["Michroma", "Titillium+Web:wght@400;600"], ds: .68, ns: .76 },
   { id: "chakra", name: "Chakra Petch", sub: "Barlow · JetBrains Mono", d: "Chakra Petch", b: "Barlow", n: "JetBrains Mono", q: ["Chakra+Petch:wght@500;600;700", "Barlow:wght@400;500;600", "JetBrains+Mono:wght@500;700"], ds: 1, ns: 1 },
   { id: "rajdhani", name: "Rajdhani", sub: "Titillium Web", d: "Rajdhani", b: "Titillium Web", n: "Rajdhani", q: ["Rajdhani:wght@500;600;700", "Titillium+Web:wght@400;600"], ds: 1.12, ns: 1.12 },
   { id: "orbitron", name: "Orbitron", sub: "Exo 2", d: "Orbitron", b: "Exo 2", n: "Orbitron", q: ["Orbitron:wght@500;600;700", "Exo+2:wght@400;500;600"], ds: .78, ns: .82 },
@@ -58,7 +59,6 @@ const FONTS = [
   { id: "oxanium", name: "Oxanium", sub: "IBM Plex Sans", d: "Oxanium", b: "IBM Plex Sans", n: "Oxanium", q: ["Oxanium:wght@500;600;700", "IBM+Plex+Sans:wght@400;500;600"], ds: 1, ns: 1 },
   { id: "unbounded", name: "Unbounded", sub: "DM Sans", d: "Unbounded", b: "DM Sans", n: "Unbounded", q: ["Unbounded:wght@500;600;700", "DM+Sans:wght@400;500;600"], ds: .78, ns: .82 },
   { id: "pixel", name: "Press Start 2P", sub: "Space Mono", d: "Press Start 2P", b: "Space Mono", n: "Press Start 2P", q: ["Press+Start+2P", "Space+Mono:wght@400;700"], ds: .55, ns: .68 },
-  { id: "michroma", name: "Michroma", sub: "Titillium Web", d: "Michroma", b: "Titillium Web", n: "Michroma", q: ["Michroma", "Titillium+Web:wght@400;600"], ds: .68, ns: .76 },
   // série « gras et impactant »
   { id: "anton", name: "Anton", sub: "Archivo", d: "Anton", b: "Archivo", n: "Anton", q: ["Anton", "Archivo:wght@400;500;600;800"], ds: 1.25, ns: 1.15 },
   { id: "archivoblack", name: "Archivo Black", sub: "Archivo", d: "Archivo Black", b: "Archivo", n: "Archivo Black", q: ["Archivo+Black", "Archivo:wght@400;500;600;800"], ds: .88, ns: .9 },
