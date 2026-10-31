@@ -28,8 +28,8 @@ const S = {
 const PREFS = Object.assign({ theme: "dark", palette: "wts", font: "michroma" }, store.get("prefs", {}));
 // ordre : fond, surface, relief, trait, texte, texte doux, accent, accent 2, texte sur accent
 const PALETTES = [
-  { id: "nuit", name: "Nuit", note: "Violet nuit et orange", dark: ["#12101c", "#1b1829", "#252136", "#332e4a", "#ece9f5", "#9a94b3", "#ff8a2a", "#8b6cff", "#1a0f02"], light: ["#f6f4fb", "#ffffff", "#eeeaf8", "#dcd6ec", "#1c1830", "#615a7d", "#d9620a", "#6a4ce0", "#ffffff"] },
   { id: "wts", name: "WTS", note: "Le thème du site WTS", dark: ["#0a0a0a", "#111111", "#171717", "#262626", "#f3f3f4", "#a1a1aa", "#ff8a1f", "#a670f5", "#0a0a0a"], light: ["#ffffff", "#fafafa", "#f4f4f5", "#e5e5e5", "#111111", "#52525b", "#d9620b", "#6d16e2", "#ffffff"] },
+  { id: "nuit", name: "Nuit", note: "Violet nuit et orange", dark: ["#12101c", "#1b1829", "#252136", "#332e4a", "#ece9f5", "#9a94b3", "#ff8a2a", "#8b6cff", "#1a0f02"], light: ["#f6f4fb", "#ffffff", "#eeeaf8", "#dcd6ec", "#1c1830", "#615a7d", "#d9620a", "#6a4ce0", "#ffffff"] },
   { id: "graphite", name: "Graphite", note: "Noir et blanc, accent bleu", dark: ["#0d0d0f", "#151518", "#1c1c20", "#2a2a30", "#f4f4f5", "#a1a1aa", "#e4e4e7", "#60a5fa", "#0d0d0f"], light: ["#fafafa", "#f4f4f5", "#ececee", "#e4e4e7", "#18181b", "#52525b", "#18181b", "#2563eb", "#ffffff"] },
   { id: "citron", name: "Citron", note: "Vert citron et jaune", dark: ["#0a0a0a", "#111111", "#171717", "#262626", "#f3f3f4", "#a1a1aa", "#3cf08a", "#ffd60a", "#0a0a0a"], light: ["#ffffff", "#fafafa", "#f4f4f5", "#e5e5e5", "#111111", "#52525b", "#0f9d4a", "#b88a00", "#ffffff"] },
   { id: "sunset", name: "Sunset", note: "Rose corail et orange", dark: ["#0a0a0a", "#111111", "#171717", "#262626", "#f3f3f4", "#a1a1aa", "#ff4f7b", "#ff8c2a", "#0a0a0a"], light: ["#ffffff", "#fafafa", "#f4f4f5", "#e5e5e5", "#111111", "#52525b", "#e8174f", "#f06a0c", "#ffffff"] },

@@ -1,5 +1,5 @@
 // Lobby · fonctionne hors ligne pour l'interface ; les données passent toujours par le réseau
-const CACHE = "lobby-v20";
+const CACHE = "lobby-v21";
 const SHELL = ["/", "/index.html", "/app.js", "/menu.js", "/meta.js", "/pc.js", "/infos.js", "/manifest.webmanifest", "/icon-192.png?v=2", "/icon-512.png?v=2", "/favicon.png?v=2"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())); });
 self.addEventListener("activate", e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
