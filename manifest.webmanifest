@@ -1,7 +1,7 @@
 {
   "name": "WTS Lobby",
   "short_name": "Lobby",
-  "description": "Sorties de jeux avec compte à rebours, mises à jour, actus et amis connectés.",
+  "description": "Sorties de jeux avec compte à rebours, mises à jour, actus, esport et jeux gratuits.",
   "lang": "fr",
   "start_url": "/",
   "scope": "/",
