@@ -37,7 +37,7 @@
       ? `<span class="navsep" role="separator">${it.label ? esc(it.label) : ""}</span>`
       : it.hidden ? "" : `<a href="#${it.id}">${esc(it.label || T[it.id].label)}${T[it.id].extra}</a>`).join("")
       // pas de séparateur au début, à la fin ou en double
-      .replace(/^(\s*<span class="navsep"[^>]*>[^<]*<\/span>)+/, "").replace(/(<span class="navsep"[^>]*>[^<]*<\/span>\s*)+$/, "")
+      .replace(/^(\s*<span class="navsep"[^>]*><\/span>)+/, "").replace(/(<span class="navsep"[^>]*>[^<]*<\/span>\s*)+$/, "")
       .replace(/(<span class="navsep"[^>]*>[^<]*<\/span>)(\s*<span class="navsep"[^>]*>[^<]*<\/span>)+/g, "$1");
     // remet l'onglet actif et les compteurs
     const v = location.hash.slice(1);
