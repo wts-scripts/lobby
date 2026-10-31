@@ -25,7 +25,7 @@ const S = {
 };
 
 /* ---------- apparence : mode, thème, police ---------- */
-const PREFS = Object.assign({ theme: "system", palette: "graphite", font: "chakra" }, store.get("prefs", {}));
+const PREFS = Object.assign({ theme: "system", palette: "graphite", font: "michroma" }, store.get("prefs", {}));
 // ordre : fond, surface, relief, trait, texte, texte doux, accent, accent 2, texte sur accent
 const PALETTES = [
   { id: "nuit", name: "Nuit", note: "Violet nuit et orange", dark: ["#12101c", "#1b1829", "#252136", "#332e4a", "#ece9f5", "#9a94b3", "#ff8a2a", "#8b6cff", "#1a0f02"], light: ["#f6f4fb", "#ffffff", "#eeeaf8", "#dcd6ec", "#1c1830", "#615a7d", "#d9620a", "#6a4ce0", "#ffffff"] },

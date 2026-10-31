@@ -8,8 +8,8 @@
   const T = Object.fromEntries(TABS.map(([id, label, extra]) => [id, { label, extra: extra || "" }]));
   // menu d'origine : rubriques groupées par des séparateurs
   const DEFAULT = [
-    { t: "tab", id: "sorties" }, { t: "tab", id: "evenements" },
-    { t: "sep", label: "Infos" }, { t: "tab", id: "actus" }, { t: "tab", id: "maj" }, { t: "tab", id: "tendances" }, { t: "tab", id: "esport" },
+    { t: "sep", label: "Infos" }, { t: "tab", id: "sorties" }, { t: "tab", id: "actus" }, { t: "tab", id: "maj" }, { t: "tab", id: "tendances" },
+    { t: "sep", label: "Live" }, { t: "tab", id: "evenements" }, { t: "tab", id: "esport" },
     { t: "sep", label: "Gratuit" }, { t: "tab", id: "gratuits" }, { t: "tab", id: "abonnements" },
     { t: "sep", label: "Outils" }, { t: "tab", id: "meta" }, { t: "tab", id: "pc" },
     { t: "sep", label: "" }, { t: "tab", id: "reglages" }
